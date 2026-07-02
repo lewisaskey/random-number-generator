@@ -9,7 +9,7 @@ def generate_number(low: int, high: int) -> int:
 
 
 def main() -> None:
-    print("=== Random Number Generator ===")
+    print("=== rng ===")
     while True:
         try:
             low = int(input("Enter minimum value (or Ctrl+C to quit): "))
@@ -31,3 +31,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
