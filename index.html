@@ -511,6 +511,110 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
+    /* Damage report table */
+    .chance-table {
+      width: 100%;
+      margin: 0.5rem 0 1rem;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .chance-table th {
+      color: #777;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.4rem 0.5rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .chance-table td {
+      padding: 0.55rem 0.5rem;
+      border-bottom: 1px solid #f2f2f6;
+      color: #444;
+    }
+
+    .chance-table td:last-child {
+      font-weight: 700;
+      color: #8e2431;
+    }
+
+    /* Result screen extras */
+    .result-joke {
+      font-size: 1rem;
+      font-style: italic;
+      color: #666;
+      margin-top: 1rem;
+      min-height: 1.4rem;
+    }
+
+    .photo-label {
+      display: inline-block;
+      margin: 0.75rem 0 0.25rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #667eea;
+      border: 2px dashed #667eea;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    .crying-frame {
+      position: relative;
+      width: 210px;
+      margin: 0.9rem auto 0.4rem;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .crying-frame img {
+      display: block;
+      width: 100%;
+      filter: grayscale(0.8) brightness(0.92) contrast(1.05) sepia(0.15) hue-rotate(180deg);
+    }
+
+    .crying-frame .sob {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 1.8rem;
+    }
+
+    .tear {
+      position: absolute;
+      top: 20%;
+      font-size: 1.2rem;
+      animation: tearfall 1.6s ease-in infinite;
+    }
+
+    .tear.t1 { left: 22%; animation-delay: 0s; }
+    .tear.t2 { left: 48%; animation-delay: 0.55s; }
+    .tear.t3 { left: 72%; animation-delay: 1.1s; }
+
+    @keyframes tearfall {
+      0% { transform: translateY(0); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translateY(110px); opacity: 0; }
+    }
+
+    .crying-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0.3rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      background: rgba(20, 20, 40, 0.75);
+    }
+
     details {
       margin-top: 1.5rem;
       text-align: left;
@@ -593,15 +697,36 @@
       <ul class="scoreboard" id="scoreboard"></ul>
     </section>
 
-    <!-- Screen 3: race -->
+    <!-- Screen 3: the damage report -->
+    <section id="screen-table" class="hidden">
+      <h2>📊 The damage report</h2>
+      <table class="chance-table">
+        <thead><tr><th>Rider</th><th>💲</th><th>Chance of paying</th></tr></thead>
+        <tbody id="chance-rows"></tbody>
+      </table>
+      <button class="primary hidden" id="race-btn">Start the race! 🏁</button>
+    </section>
+
+    <!-- Screen 4: race -->
     <section id="screen-race" class="hidden">
       <h2>🏁 And they're off!</h2>
       <div class="race-viewport" id="race-viewport"></div>
     </section>
 
-    <!-- Screen 4: result -->
+    <!-- Screen 5: result -->
     <section id="screen-result" class="hidden">
+      <p class="result-joke" id="result-joke"></p>
       <div class="banner" id="result-banner"></div>
+      <label class="photo-label" for="payer-photo" id="photo-label">📷 Add a photo for the crying portrait</label>
+      <input type="file" id="payer-photo" accept="image/*" class="hidden-input">
+      <div class="crying-frame hidden" id="crying-frame">
+        <img id="crying-img" alt="The unlucky payer">
+        <span class="tear t1">💧</span>
+        <span class="tear t2">💧</span>
+        <span class="tear t3">💧</span>
+        <span class="sob">😭</span>
+        <span class="crying-caption" id="crying-caption"></span>
+      </div>
       <button class="primary" id="again-btn">Race again</button>
     </section>
   </div>
@@ -610,29 +735,44 @@
     /* ---------- Game constants ---------- */
     const RACE_SECONDS = 10;
     const CRASH_MIN = 2, CRASH_MAX = 9;
-    const BIKE_CHANCE = 1 / 3;
+    const DOLLAR_CHANCE = 1 / 3;
     const OTHER_SYMBOLS = ["☕", "🥐", "🍰", "🥖", "🧁"];
     const GRID_COLS = 4, GRID_ROWS = 4; // 16 symbols per spin
 
     /* ---------- Pure game logic (kept DOM-free for testing) ---------- */
-    function crashWeight(bikes) {
-      // 0-16 bikes; every 4 bikes halves your crash odds (0 -> 8, 16 -> 0.5)
-      return 8 * Math.pow(2, -bikes / 4);
+    function payWeight(dollars) {
+      // 0-16 dollar signs; every 4 doubles your odds of paying (0 -> 1, 16 -> 16)
+      return Math.pow(2, dollars / 4);
     }
 
-    function hasBikeRow(columns) {
+    function hasDollarRow(columns) {
       // columns: GRID_COLS arrays of GRID_ROWS symbols. A full horizontal
-      // row of bikes across all columns grants immunity from paying.
+      // row of dollar signs across all columns grants immunity from paying.
       for (let r = 0; r < GRID_ROWS; r++) {
-        if (columns.every((col) => col[r] === "🚴")) return true;
+        if (columns.every((col) => col[r] === "💲")) return true;
       }
       return false;
     }
 
     function spinReelSymbol(rand) {
-      return rand() < BIKE_CHANCE
-        ? "🚴"
+      return rand() < DOLLAR_CHANCE
+        ? "💲"
         : OTHER_SYMBOLS[Math.floor(rand() * OTHER_SYMBOLS.length)];
+    }
+
+    function payChances(players) {
+      // players: [{name, dollars, immune}] -> [{name, pct}] summing to 100.
+      // Immune players are 0%. If everyone is immune, equal odds — the
+      // cafe still needs paying for.
+      const pool = players.filter((p) => !p.immune);
+      if (pool.length === 0) {
+        return players.map((p) => ({ name: p.name, pct: 100 / players.length }));
+      }
+      const total = pool.reduce((s, p) => s + payWeight(p.dollars), 0);
+      return players.map((p) => ({
+        name: p.name,
+        pct: p.immune ? 0 : (payWeight(p.dollars) / total) * 100,
+      }));
     }
 
     function pickPayer(entries, rand) {
@@ -674,6 +814,7 @@
     const screens = {
       setup: $("screen-setup"),
       spin: $("screen-spin"),
+      table: $("screen-table"),
       race: $("screen-race"),
       result: $("screen-result"),
     };
@@ -778,7 +919,7 @@
         $("setup-error").textContent = "You need at least 2 players ticked to race.";
         return;
       }
-      racers = present.map((p) => ({ name: p.name, bikes: null, immune: false }));
+      racers = present.map((p) => ({ name: p.name, dollars: null, immune: false }));
       spinIndex = 0;
       showScreen("spin");
       renderSpinScreen();
@@ -818,11 +959,11 @@
       renderScoreboard();
     }
 
-    function setRiskMeter(bikes, immune) {
+    function setRiskMeter(dollars, immune) {
       const thumb = $("risk-thumb");
       thumb.classList.toggle("immune", immune);
-      // 0 bikes -> top (RISKY), 16 bikes or immunity -> bottom (SAFE)
-      const frac = immune ? 1 : bikes / (GRID_COLS * GRID_ROWS);
+      // 16 dollars -> top (RISKY), 0 dollars or immunity -> bottom (SAFE)
+      const frac = immune ? 1 : 1 - dollars / (GRID_COLS * GRID_ROWS);
       thumb.style.top = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 12).toFixed(1)}px)`;
     }
 
@@ -851,8 +992,8 @@
         if (r.bikes === null) return;
         const li = document.createElement("li");
         li.textContent = r.immune
-          ? `${r.name}: ${r.bikes}×🚴 — 🛡️ IMMUNE (full bike row)`
-          : `${r.name}: ${r.bikes}×🚴 — race weight ${crashWeight(r.bikes).toFixed(2)}`;
+          ? `${r.name}: ${r.dollars}×💲 — 🛡️ IMMUNE (full 💲 row)`
+          : `${r.name}: ${r.dollars}×💲`;
         list.appendChild(li);
       });
     }
@@ -861,13 +1002,13 @@
       const btn = $("spin-btn");
       const current = racers[spinIndex];
 
-      if (current.bikes !== null) {
-        // Button is in "Next player" / "Start the race!" mode
+      if (current.dollars !== null) {
+        // Button is in "Next player" / "See the chances" mode
         spinIndex++;
         if (spinIndex < racers.length) {
           renderSpinScreen();
         } else {
-          startRace();
+          showChanceTable();
         }
         return;
       }
@@ -922,14 +1063,14 @@
 
     function finishSpin(finals) {
       const current = racers[spinIndex];
-      current.bikes = finals.flat().filter((s) => s === "🚴").length;
-      current.immune = hasBikeRow(finals);
-      setRiskMeter(current.bikes, current.immune);
+      current.dollars = finals.flat().filter((s) => s === "💲").length;
+      current.immune = hasDollarRow(finals);
+      setRiskMeter(current.dollars, current.immune);
 
       if (current.immune) {
-        $("spin-result").textContent = `🛡️ ${current.bikes}× 🚴 — race weight 0, you can't be picked!`;
+        $("spin-result").textContent = "🛡️ FULL 💲 ROW — instant immunity, you can't pay!";
         const overlay = $("jackpot-overlay");
-        overlay.textContent = "🛡️ FULL BIKE ROW — IMMUNITY!";
+        overlay.textContent = "🛡️ JACKPOT — IMMUNITY!";
         overlay.classList.remove("hidden");
         overlay.classList.remove("pop");
         void overlay.offsetWidth;
@@ -937,18 +1078,19 @@
         [523, 659, 784, 1047, 1319].forEach((f, i) =>
           setTimeout(() => playTone(f, 0.2, "triangle", 0.07), i * 110));
       } else {
-        $("spin-result").textContent =
-          `${current.bikes}× 🚴 → race weight ${crashWeight(current.bikes).toFixed(2)} (lower = safer)`;
-        if (current.bikes >= 9) {
+        const mood = current.dollars <= 2 ? "🎉" : current.dollars <= 5 ? "🙂"
+          : current.dollars <= 8 ? "😬" : "💸";
+        $("spin-result").textContent = `${current.dollars}× 💲 ${mood} (fewer is better)`;
+        if (current.dollars >= 9) {
           const overlay = $("jackpot-overlay");
-          overlay.textContent = `🎰 JACKPOT! ${current.bikes}× 🚴`;
+          overlay.textContent = `💸 UH OH! ${current.dollars}× 💲`;
           overlay.classList.remove("hidden");
           overlay.classList.remove("pop");
           void overlay.offsetWidth;
           overlay.classList.add("pop");
-          [523, 659, 784, 1047].forEach((f, i) =>
-            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
-        } else if (current.bikes >= 6) {
+          [784, 659, 523, 392].forEach((f, i) =>
+            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 130));
+        } else if (current.dollars <= 2) {
           [523, 659, 784].forEach((f, i) =>
             setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
         }
@@ -956,10 +1098,51 @@
       renderScoreboard();
 
       const btn = $("spin-btn");
-      btn.textContent = spinIndex < racers.length - 1 ? "Next player" : "Start the race! 🏁";
+      btn.textContent = spinIndex < racers.length - 1 ? "Next player" : "See the chances 📊";
       btn.disabled = false;
       spinning = false;
     }
+
+    /* ---------- The damage report table ---------- */
+    function showChanceTable() {
+      showScreen("table");
+      const rows = $("chance-rows");
+      rows.innerHTML = "";
+      $("race-btn").classList.add("hidden");
+
+      const chances = payChances(racers);
+      const ordered = [...racers].sort((a, b) => a.dollars - b.dollars);
+
+      // Rows toggle in one by one, safest first...
+      ordered.forEach((r, i) => {
+        setTimeout(() => {
+          const tr = document.createElement("tr");
+          tr.className = "pop";
+          tr.innerHTML = "<td></td><td></td><td>…</td>";
+          tr.children[0].textContent = r.immune ? `${r.name} 🛡️` : r.name;
+          tr.children[1].textContent = `${r.dollars}×💲`;
+          rows.appendChild(tr);
+          playTone(480 + i * 50, 0.08, "triangle", 0.04);
+        }, i * 650);
+      });
+
+      // ...then the chances fill in, riskiest revealed last
+      const rowsDone = ordered.length * 650 + 400;
+      ordered.forEach((r, i) => {
+        setTimeout(() => {
+          const chance = chances.find((c) => c.name === r.name);
+          const cell = rows.children[i].children[2];
+          cell.textContent = r.immune ? "🛡️ 0%" : `${chance.pct.toFixed(1)}%`;
+          cell.classList.add("pop");
+          playTone(560 + i * 45, 0.1, "triangle", 0.05);
+        }, rowsDone + i * 550);
+      });
+
+      setTimeout(() => $("race-btn").classList.remove("hidden"),
+        rowsDone + ordered.length * 550 + 250);
+    }
+
+    $("race-btn").addEventListener("click", () => startRace());
 
     /* ---------- Race screen (top-down following camera) ---------- */
     const HELMET_COLORS = ["#e5484d", "#3b82f6", "#22c55e", "#f59e0b",
@@ -984,14 +1167,11 @@
     function startRace() {
       showScreen("race");
 
-      // Immune riders (full bike row) are excluded from the draw entirely.
-      // If somehow everyone is immune, fall back to equal odds — the cafe
-      // still needs paying for.
-      let candidates = racers.filter((r) => !r.immune)
-        .map((r) => ({ name: r.name, weight: crashWeight(r.bikes) }));
-      if (candidates.length === 0) {
-        candidates = racers.map((r) => ({ name: r.name, weight: 1 }));
-      }
+      // The same percentages shown in the damage report drive the draw —
+      // immune riders are at 0% and can never be picked.
+      const candidates = payChances(racers)
+        .filter((c) => c.pct > 0)
+        .map((c) => ({ name: c.name, weight: c.pct }));
       const payer = pickPayer(candidates, Math.random);
       const crashAt = drawCrashTime(Math.random);
 
@@ -1137,6 +1317,16 @@
     }
 
     /* ---------- Result screen ---------- */
+    const JOKES = [
+      "{n} didn't lose a race — {n} won an invoice. 🪧",
+      "The protestor's sign just said \"{n} should pay\". Fair enough.",
+      "Witnesses report {n}'s wallet screamed louder than the crash.",
+      "{n} spun the wheel of fortune and found only misfortune.",
+      "Statistically {n} was doomed. Mathematically? Also doomed.",
+      "The croissants voted, and they chose {n}. Democracy is delicious.",
+      "{n} braked when they should have accelerated. The bill didn't.",
+    ];
+
     function finishRace(payer) {
       history.push({ name: payer, date: new Date().toISOString() });
       if (history.length > 20) history = history.slice(-20);
@@ -1144,12 +1334,35 @@
       renderHistory();
 
       showScreen("result");
+      const joke = JOKES[Math.floor(Math.random() * JOKES.length)];
+      $("result-joke").textContent = joke.replaceAll("{n}", payer);
       const banner = $("result-banner");
-      banner.textContent = `🪧💥 A protestor took out ${payer} — ${payer} pays! ☕`;
+      banner.textContent = `Thanks for offering to pay, ${payer}! ☕`;
       banner.classList.remove("pop");
       void banner.offsetWidth;
       banner.classList.add("pop");
+
+      // Reset the crying portrait for this round
+      $("payer-photo").value = "";
+      $("crying-frame").classList.add("hidden");
+      $("photo-label").textContent = `📷 Add a photo of ${payer} for the crying portrait`;
+      $("crying-caption").textContent = `${payer}, settling the bill…`;
     }
+
+    // The photo never leaves the phone — it's read locally and only
+    // rendered into the page with the tearful treatment.
+    $("payer-photo").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        $("crying-img").src = reader.result;
+        $("crying-frame").classList.remove("hidden");
+        playTone(392, 0.3, "triangle", 0.05);
+        setTimeout(() => playTone(330, 0.45, "triangle", 0.05), 260);
+      };
+      reader.readAsDataURL(file);
+    });
 
     $("again-btn").addEventListener("click", () => {
       showScreen("setup");
