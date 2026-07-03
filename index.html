@@ -157,10 +157,11 @@
       errorEl.textContent = "";
       resultEl.textContent = "";
 
-      const min = parseInt(minInput.value, 10);
-      const max = parseInt(maxInput.value, 10);
+      const min = Number(minInput.value);
+      const max = Number(maxInput.value);
 
-      if (Number.isNaN(min) || Number.isNaN(max)) {
+      if (minInput.value.trim() === "" || maxInput.value.trim() === "" ||
+          !Number.isInteger(min) || !Number.isInteger(max)) {
         errorEl.textContent = "Please enter valid integers for both fields.";
         return;
       }
