@@ -741,8 +741,9 @@
 
     /* ---------- Pure game logic (kept DOM-free for testing) ---------- */
     function payWeight(dollars) {
-      // 0-16 dollar signs; every 4 doubles your odds of paying (0 -> 1, 16 -> 16)
-      return Math.pow(2, dollars / 4);
+      // 0-16 dollar signs; more is better — every 4 halves your odds of
+      // paying (0 -> 1, 16 -> 1/16)
+      return Math.pow(2, -dollars / 4);
     }
 
     function hasDollarRow(columns) {
@@ -962,8 +963,8 @@
     function setRiskMeter(dollars, immune) {
       const thumb = $("risk-thumb");
       thumb.classList.toggle("immune", immune);
-      // 16 dollars -> top (RISKY), 0 dollars or immunity -> bottom (SAFE)
-      const frac = immune ? 1 : 1 - dollars / (GRID_COLS * GRID_ROWS);
+      // 0 dollars -> top (RISKY), 16 dollars or immunity -> bottom (SAFE)
+      const frac = immune ? 1 : dollars / (GRID_COLS * GRID_ROWS);
       thumb.style.top = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 12).toFixed(1)}px)`;
     }
 
@@ -1078,21 +1079,27 @@
         [523, 659, 784, 1047, 1319].forEach((f, i) =>
           setTimeout(() => playTone(f, 0.2, "triangle", 0.07), i * 110));
       } else {
-        const mood = current.dollars <= 2 ? "🎉" : current.dollars <= 5 ? "🙂"
-          : current.dollars <= 8 ? "😬" : "💸";
-        $("spin-result").textContent = `${current.dollars}× 💲 ${mood} (fewer is better)`;
+        const mood = current.dollars <= 2 ? "💸" : current.dollars <= 5 ? "😬"
+          : current.dollars <= 8 ? "🙂" : "🎉";
+        $("spin-result").textContent = `${current.dollars}× 💲 ${mood} (more is better)`;
         if (current.dollars >= 9) {
           const overlay = $("jackpot-overlay");
-          overlay.textContent = `💸 UH OH! ${current.dollars}× 💲`;
+          overlay.textContent = `🎰 JACKPOT! ${current.dollars}× 💲`;
+          overlay.classList.remove("hidden");
+          overlay.classList.remove("pop");
+          void overlay.offsetWidth;
+          overlay.classList.add("pop");
+          [523, 659, 784, 1047].forEach((f, i) =>
+            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
+        } else if (current.dollars <= 2) {
+          const overlay = $("jackpot-overlay");
+          overlay.textContent = `💸 UH OH! only ${current.dollars}× 💲`;
           overlay.classList.remove("hidden");
           overlay.classList.remove("pop");
           void overlay.offsetWidth;
           overlay.classList.add("pop");
           [784, 659, 523, 392].forEach((f, i) =>
             setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 130));
-        } else if (current.dollars <= 2) {
-          [523, 659, 784].forEach((f, i) =>
-            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
         }
       }
       renderScoreboard();
@@ -1111,7 +1118,8 @@
       $("race-btn").classList.add("hidden");
 
       const chances = payChances(racers);
-      const ordered = [...racers].sort((a, b) => a.dollars - b.dollars);
+      // Safest first (most dollars), so the riskiest reveal lands last
+      const ordered = [...racers].sort((a, b) => b.dollars - a.dollars);
 
       // Rows toggle in one by one, safest first...
       ordered.forEach((r, i) => {
