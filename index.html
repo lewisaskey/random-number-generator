@@ -163,29 +163,106 @@
       min-height: 1.2rem;
     }
 
-    /* Slot machine */
-    .slot {
-      display: flex;
-      gap: 0.7rem;
-      justify-content: center;
-      margin: 1.25rem 0;
+    /* Slot machine cabinet */
+    .machine {
+      margin: 1.25rem auto;
+      padding: 0.8rem 0.8rem 1rem;
+      max-width: 320px;
+      background: linear-gradient(160deg, #8e2431, #5e1520);
+      border: 3px solid #d4a437;
+      border-radius: 16px;
+      box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.18),
+                  0 10px 24px rgba(94, 21, 32, 0.35);
     }
 
-    .reel {
-      width: 80px;
-      height: 80px;
+    .lights {
+      display: flex;
+      justify-content: space-between;
+      margin: 0 6px 10px;
+    }
+
+    .lights span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffd76a;
+      animation: blink 1.2s infinite;
+    }
+
+    .lights span:nth-child(2n) { animation-delay: 0.3s; }
+    .lights span:nth-child(3n) { animation-delay: 0.6s; }
+    .lights span:nth-child(4n) { animation-delay: 0.9s; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.25; box-shadow: none; }
+      50% { opacity: 1; box-shadow: 0 0 6px #ffd76a; }
+    }
+
+    .slot-area {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .payline-marker {
+      color: #ffd76a;
+      font-size: 0.75rem;
+      text-shadow: 0 0 4px rgba(255, 215, 106, 0.7);
+    }
+
+    .slot {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .reel-window {
+      width: 74px;
+      height: 156px;
+      overflow: hidden;
+      position: relative;
+      background: #fdfdfd;
+      border: 3px solid #caa53d;
+      border-radius: 10px;
+      box-shadow: inset 0 12px 14px rgba(0, 0, 0, 0.18),
+                  inset 0 -12px 14px rgba(0, 0, 0, 0.18);
+    }
+
+    .reel-window::after {
+      /* payline band across the middle row */
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 52px;
+      height: 52px;
+      border-top: 1px dashed rgba(212, 164, 55, 0.6);
+      border-bottom: 1px dashed rgba(212, 164, 55, 0.6);
+      pointer-events: none;
+    }
+
+    .reel-window.stopped {
+      border-color: #8e2431;
+    }
+
+    .strip {
+      display: flex;
+      flex-direction: column;
+      will-change: transform;
+    }
+
+    .strip.blur {
+      filter: blur(2px);
+    }
+
+    .cell {
+      height: 52px;
+      flex: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.6rem;
-      background: #f7f7fb;
-      border: 3px solid #ddd;
-      border-radius: 12px;
-    }
-
-    .reel.stopped {
-      border-color: #667eea;
-      background: #f0effa;
+      font-size: 1.9rem;
     }
 
     .spin-result {
@@ -322,10 +399,20 @@
     <!-- Screen 2: slot machine spins -->
     <section id="screen-spin" class="hidden">
       <h2 id="spin-title"></h2>
-      <div class="slot">
-        <div class="reel" id="reel-0">❔</div>
-        <div class="reel" id="reel-1">❔</div>
-        <div class="reel" id="reel-2">❔</div>
+      <div class="machine">
+        <div class="lights">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="slot-area">
+          <span class="payline-marker">▶</span>
+          <div class="slot">
+            <div class="reel-window" id="window-0"><div class="strip" id="strip-0"></div></div>
+            <div class="reel-window" id="window-1"><div class="strip" id="strip-1"></div></div>
+            <div class="reel-window" id="window-2"><div class="strip" id="strip-2"></div></div>
+          </div>
+          <span class="payline-marker">◀</span>
+        </div>
       </div>
       <p class="spin-result" id="spin-result"></p>
       <button class="primary" id="spin-btn">Spin</button>
@@ -518,18 +605,53 @@
       renderSpinScreen();
     });
 
+    const REEL_CELL = 52; // must match .cell height in CSS
+    const REEL_DURATIONS = [1.4, 2.0, 2.6]; // reels stop left to right
+
+    function cellEl(symbol) {
+      const div = document.createElement("div");
+      div.className = "cell";
+      div.textContent = symbol;
+      return div;
+    }
+
+    function resetReel(i) {
+      const strip = $(`strip-${i}`);
+      $(`window-${i}`).classList.remove("stopped");
+      strip.classList.remove("blur");
+      strip.style.transition = "none";
+      strip.style.transform = "translateY(0)";
+      strip.innerHTML = "";
+      [spinReelSymbol(Math.random), "❔", spinReelSymbol(Math.random)]
+        .forEach((s) => strip.appendChild(cellEl(s)));
+    }
+
     function renderSpinScreen() {
       const current = racers[spinIndex];
       $("spin-title").textContent = `${current.name} — your spin!`;
       $("spin-result").textContent = "";
       $("spin-btn").textContent = "Spin";
       $("spin-btn").disabled = false;
-      for (let i = 0; i < 3; i++) {
-        const reel = $(`reel-${i}`);
-        reel.textContent = "❔";
-        reel.classList.remove("stopped");
-      }
+      for (let i = 0; i < 3; i++) resetReel(i);
       renderScoreboard();
+    }
+
+    /* Casino sounds — tiny synthesized tones, silently skipped if audio is unavailable */
+    let audioCtx = null;
+    function playTone(freq, duration, type, volume) {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch {}
     }
 
     function renderScoreboard() {
@@ -563,20 +685,42 @@
       btn.disabled = true;
 
       const finals = [0, 1, 2].map(() => spinReelSymbol(Math.random));
-      const cyclers = [];
+
+      // Reel ticking while anything is still spinning
+      const ticker = setInterval(() => playTone(1400, 0.03, "square", 0.015), 95);
 
       for (let i = 0; i < 3; i++) {
-        const reel = $(`reel-${i}`);
-        reel.classList.remove("stopped");
-        cyclers[i] = setInterval(() => {
-          reel.textContent = spinReelSymbol(Math.random);
-        }, 60);
+        const strip = $(`strip-${i}`);
+        const durationMs = REEL_DURATIONS[i] * 1000;
+
+        // Rebuild the strip: current visible cells, a run of filler symbols,
+        // then the final window with the result on the middle (payline) row.
+        const symbols = [...strip.children].map((c) => c.textContent);
+        const fillers = 12 + i * 6; // later reels travel further
+        for (let n = 0; n < fillers; n++) symbols.push(spinReelSymbol(Math.random));
+        symbols.push(spinReelSymbol(Math.random), finals[i], spinReelSymbol(Math.random));
+
+        strip.innerHTML = "";
+        symbols.forEach((s) => strip.appendChild(cellEl(s)));
+
+        // Snap to the top, force a reflow, then launch one decelerating
+        // transition that overshoots slightly and settles — the classic clunk.
+        strip.style.transition = "none";
+        strip.style.transform = "translateY(0)";
+        void strip.offsetHeight;
+        strip.classList.add("blur");
+        strip.style.transition = `transform ${REEL_DURATIONS[i]}s cubic-bezier(0.15, 0.85, 0.25, 1.04)`;
+        strip.style.transform = `translateY(-${(symbols.length - 3) * REEL_CELL}px)`;
+
+        setTimeout(() => strip.classList.remove("blur"), durationMs * 0.6);
         setTimeout(() => {
-          clearInterval(cyclers[i]);
-          reel.textContent = finals[i];
-          reel.classList.add("stopped");
-          if (i === 2) finishSpin(finals);
-        }, 500 * (i + 1));
+          $(`window-${i}`).classList.add("stopped");
+          playTone(620 + i * 140, 0.15, "triangle", 0.05);
+          if (i === 2) {
+            clearInterval(ticker);
+            finishSpin(finals);
+          }
+        }, durationMs + 100);
       }
     });
 
@@ -585,6 +729,13 @@
       current.bikes = finals.filter((s) => s === "🚴").length;
       $("spin-result").textContent = RISK_LABELS[current.bikes];
       renderScoreboard();
+
+      if (current.bikes >= 2) {
+        // Little jackpot fanfare for a lucky spin
+        [523, 659, 784, current.bikes === 3 ? 1047 : null].forEach((f, i) => {
+          if (f) setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110);
+        });
+      }
 
       const btn = $("spin-btn");
       btn.textContent = spinIndex < racers.length - 1 ? "Next player" : "Start the race! 🏁";
