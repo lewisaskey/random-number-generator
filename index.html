@@ -27,7 +27,7 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 2.5rem;
       width: 100%;
-      max-width: 400px;
+      max-width: 520px;
       text-align: center;
     }
 
@@ -37,32 +37,23 @@
       margin-bottom: 0.5rem;
     }
 
+    h2 {
+      font-size: 1.25rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
     .subtitle {
       color: #777;
       font-size: 0.95rem;
       margin-bottom: 2rem;
     }
 
-    .inputs {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+    .hidden {
+      display: none !important;
     }
 
-    .field {
-      flex: 1;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #555;
-      margin-bottom: 0.35rem;
-    }
-
-    input[type="number"] {
+    input[type="text"] {
       width: 100%;
       padding: 0.7rem 0.9rem;
       font-size: 1rem;
@@ -72,12 +63,11 @@
       transition: border-color 0.2s;
     }
 
-    input[type="number"]:focus {
+    input[type="text"]:focus {
       border-color: #667eea;
     }
 
     button {
-      width: 100%;
       padding: 0.85rem;
       font-size: 1.05rem;
       font-weight: 600;
@@ -89,33 +79,189 @@
       transition: transform 0.1s, box-shadow 0.2s;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
     }
 
-    button:active {
+    button:active:not(:disabled) {
       transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .add-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .add-row button {
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      min-height: 2.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      background: #f0effa;
+      border: 2px solid #ddd;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .chip.present {
+      border-color: #667eea;
+    }
+
+    .chip input[type="checkbox"] {
+      accent-color: #667eea;
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+    }
+
+    .chip .remove {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0 0.15rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .chip .remove:hover {
+      color: #d33;
+      box-shadow: none;
     }
 
     .error {
       color: #d33;
       font-size: 0.9rem;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       min-height: 1.2rem;
     }
 
-    .result {
-      margin-top: 1.25rem;
-      font-size: 3rem;
-      font-weight: 700;
-      color: #667eea;
-      min-height: 4rem;
+    /* Slot machine */
+    .slot {
+      display: flex;
+      gap: 0.7rem;
+      justify-content: center;
+      margin: 1.25rem 0;
+    }
+
+    .reel {
+      width: 80px;
+      height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 2.6rem;
+      background: #f7f7fb;
+      border: 3px solid #ddd;
+      border-radius: 12px;
     }
 
-    .result.pop {
+    .reel.stopped {
+      border-color: #667eea;
+      background: #f0effa;
+    }
+
+    .spin-result {
+      font-size: 1.05rem;
+      color: #555;
+      min-height: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .scoreboard {
+      list-style: none;
+      margin-top: 1.25rem;
+      color: #666;
+      font-size: 0.92rem;
+    }
+
+    .scoreboard li {
+      padding: 0.15rem 0;
+    }
+
+    /* Race track */
+    .track {
+      margin: 1rem 0;
+      text-align: left;
+    }
+
+    .lane {
+      position: relative;
+      height: 44px;
+      border-bottom: 2px dashed #e2e2ee;
+      overflow: hidden;
+    }
+
+    .lane:last-child {
+      border-bottom: none;
+    }
+
+    .lane .finish {
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      font-size: 1.4rem;
+      opacity: 0.6;
+    }
+
+    .rider {
+      position: absolute;
+      left: 0;
+      top: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: none;
+    }
+
+    .rider .emoji {
+      font-size: 1.5rem;
+      line-height: 1.1;
+    }
+
+    .rider .tag {
+      font-size: 0.62rem;
+      color: #666;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Result */
+    .banner {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 1.5rem 0;
+    }
+
+    .pop {
       animation: pop 0.3s ease;
     }
 
@@ -123,64 +269,427 @@
       0% { transform: scale(0.5); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
+
+    details {
+      margin-top: 1.5rem;
+      text-align: left;
+      color: #666;
+      font-size: 0.92rem;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    details ul {
+      list-style: none;
+      margin: 0.5rem 0;
+    }
+
+    details li {
+      padding: 0.15rem 0;
+    }
+
+    details .clear {
+      color: #999;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>👋 Welcome to the Random Number Generator!</h1>
-    <p class="subtitle">Pick a range and I'll generate a random number for you.</p>
+    <h1>☕🚴 Cafe Bike Race</h1>
+    <p class="subtitle">The crasher pays!</p>
 
-    <div class="inputs">
-      <div class="field">
-        <label for="min">Minimum</label>
-        <input type="number" id="min" value="1" step="1">
+    <!-- Screen 1: setup -->
+    <section id="screen-setup">
+      <div class="add-row">
+        <input type="text" id="name-input" placeholder="Add a player…" maxlength="20">
+        <button id="add-btn">Add</button>
       </div>
-      <div class="field">
-        <label for="max">Maximum</label>
-        <input type="number" id="max" value="100" step="1">
+      <div class="chips" id="chips"></div>
+      <p class="error" id="setup-error"></p>
+      <button class="primary" id="start-btn">Start</button>
+      <details>
+        <summary>Payment history</summary>
+        <ul id="history-list"></ul>
+        <a href="#" class="clear" id="clear-history">clear history</a>
+      </details>
+    </section>
+
+    <!-- Screen 2: slot machine spins -->
+    <section id="screen-spin" class="hidden">
+      <h2 id="spin-title"></h2>
+      <div class="slot">
+        <div class="reel" id="reel-0">❔</div>
+        <div class="reel" id="reel-1">❔</div>
+        <div class="reel" id="reel-2">❔</div>
       </div>
-    </div>
+      <p class="spin-result" id="spin-result"></p>
+      <button class="primary" id="spin-btn">Spin</button>
+      <ul class="scoreboard" id="scoreboard"></ul>
+    </section>
 
-    <button id="generate">Generate</button>
+    <!-- Screen 3: race -->
+    <section id="screen-race" class="hidden">
+      <h2>🏁 And they're off!</h2>
+      <div class="track" id="track"></div>
+    </section>
 
-    <p class="error" id="error"></p>
-    <div class="result" id="result"></div>
+    <!-- Screen 4: result -->
+    <section id="screen-result" class="hidden">
+      <div class="banner" id="result-banner"></div>
+      <button class="primary" id="again-btn">Race again</button>
+    </section>
   </div>
 
   <script>
-    const minInput = document.getElementById("min");
-    const maxInput = document.getElementById("max");
-    const errorEl = document.getElementById("error");
-    const resultEl = document.getElementById("result");
+    /* ---------- Game constants ---------- */
+    const RACE_SECONDS = 10;
+    const CRASH_MIN = 2, CRASH_MAX = 9;
+    const BIKE_CHANCE = 1 / 3;
+    const OTHER_SYMBOLS = ["☕", "🍰", "⭐", "🔔"];
+    const RISK_LABELS = [
+      "😬 no bikes — high crash risk!",
+      "🚴 one bike — risky ride",
+      "🚴🚴 two bikes — low crash risk",
+      "🍀 three bikes — super safe!",
+    ];
 
-    function generate() {
-      errorEl.textContent = "";
-      resultEl.textContent = "";
-
-      const min = Number(minInput.value);
-      const max = Number(maxInput.value);
-
-      if (minInput.value.trim() === "" || maxInput.value.trim() === "" ||
-          !Number.isInteger(min) || !Number.isInteger(max)) {
-        errorEl.textContent = "Please enter valid integers for both fields.";
-        return;
-      }
-      if (min > max) {
-        errorEl.textContent = "Minimum must not be greater than maximum.";
-        return;
-      }
-
-      const number = Math.floor(Math.random() * (max - min + 1)) + min;
-      resultEl.textContent = number;
-      resultEl.classList.remove("pop");
-      void resultEl.offsetWidth; /* restart the animation on repeat clicks */
-      resultEl.classList.add("pop");
+    /* ---------- Pure game logic (kept DOM-free for testing) ---------- */
+    function crashWeight(bikes) {
+      return 8 / Math.pow(2, bikes); // 0,1,2,3 bikes -> 8,4,2,1
     }
 
-    document.getElementById("generate").addEventListener("click", generate);
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") generate();
+    function spinReelSymbol(rand) {
+      return rand() < BIKE_CHANCE
+        ? "🚴"
+        : OTHER_SYMBOLS[Math.floor(rand() * OTHER_SYMBOLS.length)];
+    }
+
+    function pickPayer(entries, rand) {
+      // entries: [{name, weight}] — weighted random pick
+      const total = entries.reduce((s, e) => s + e.weight, 0);
+      let r = rand() * total;
+      for (const e of entries) {
+        r -= e.weight;
+        if (r < 0) return e.name;
+      }
+      return entries[entries.length - 1].name;
+    }
+
+    function drawCrashTime(rand) {
+      return CRASH_MIN + rand() * (CRASH_MAX - CRASH_MIN);
+    }
+
+    /* ---------- Persistence ---------- */
+    function load(key, fallback) {
+      try {
+        const v = JSON.parse(localStorage.getItem(key));
+        return Array.isArray(v) ? v : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function save(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch {}
+    }
+
+    let players = load("caferace.group", []); // [{name, present}]
+    let history = load("caferace.history", []); // [{name, date}]
+
+    /* ---------- Elements ---------- */
+    const $ = (id) => document.getElementById(id);
+    const screens = {
+      setup: $("screen-setup"),
+      spin: $("screen-spin"),
+      race: $("screen-race"),
+      result: $("screen-result"),
+    };
+
+    function showScreen(name) {
+      for (const [key, el] of Object.entries(screens)) {
+        el.classList.toggle("hidden", key !== name);
+      }
+    }
+
+    /* ---------- Setup screen ---------- */
+    function renderChips() {
+      const box = $("chips");
+      box.innerHTML = "";
+      players.forEach((p, i) => {
+        const chip = document.createElement("span");
+        chip.className = "chip" + (p.present ? " present" : "");
+
+        const check = document.createElement("input");
+        check.type = "checkbox";
+        check.checked = p.present;
+        check.title = "Playing today?";
+        check.addEventListener("change", () => {
+          players[i].present = check.checked;
+          save("caferace.group", players);
+          renderChips();
+        });
+
+        const label = document.createElement("span");
+        label.textContent = p.name;
+
+        const remove = document.createElement("button");
+        remove.className = "remove";
+        remove.textContent = "×";
+        remove.title = "Remove player";
+        remove.addEventListener("click", () => {
+          players.splice(i, 1);
+          save("caferace.group", players);
+          renderChips();
+        });
+
+        chip.append(check, label, remove);
+        box.appendChild(chip);
+      });
+    }
+
+    function renderHistory() {
+      const list = $("history-list");
+      list.innerHTML = "";
+      if (history.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "No races yet.";
+        list.appendChild(li);
+        return;
+      }
+      [...history].reverse().forEach((h) => {
+        const li = document.createElement("li");
+        const date = new Date(h.date).toLocaleDateString(undefined, {
+          day: "numeric", month: "short", year: "numeric",
+        });
+        li.textContent = `☕ ${h.name} — ${date}`;
+        list.appendChild(li);
+      });
+    }
+
+    function addPlayer() {
+      const input = $("name-input");
+      const name = input.value.trim();
+      $("setup-error").textContent = "";
+      if (!name) return;
+      if (players.some((p) => p.name.toLowerCase() === name.toLowerCase())) {
+        $("setup-error").textContent = `${name} is already in the group.`;
+        return;
+      }
+      players.push({ name, present: true });
+      save("caferace.group", players);
+      input.value = "";
+      input.focus();
+      renderChips();
+    }
+
+    $("add-btn").addEventListener("click", addPlayer);
+    $("name-input").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") addPlayer();
     });
+
+    $("clear-history").addEventListener("click", (e) => {
+      e.preventDefault();
+      history = [];
+      save("caferace.history", history);
+      renderHistory();
+    });
+
+    /* ---------- Spin screen ---------- */
+    let racers = []; // [{name, bikes}] for today's present players
+    let spinIndex = 0;
+    let spinning = false;
+
+    $("start-btn").addEventListener("click", () => {
+      const present = players.filter((p) => p.present);
+      if (present.length < 2) {
+        $("setup-error").textContent = "You need at least 2 players ticked to race.";
+        return;
+      }
+      racers = present.map((p) => ({ name: p.name, bikes: null }));
+      spinIndex = 0;
+      showScreen("spin");
+      renderSpinScreen();
+    });
+
+    function renderSpinScreen() {
+      const current = racers[spinIndex];
+      $("spin-title").textContent = `${current.name} — your spin!`;
+      $("spin-result").textContent = "";
+      $("spin-btn").textContent = "Spin";
+      $("spin-btn").disabled = false;
+      for (let i = 0; i < 3; i++) {
+        const reel = $(`reel-${i}`);
+        reel.textContent = "❔";
+        reel.classList.remove("stopped");
+      }
+      renderScoreboard();
+    }
+
+    function renderScoreboard() {
+      const list = $("scoreboard");
+      list.innerHTML = "";
+      racers.forEach((r) => {
+        if (r.bikes === null) return;
+        const li = document.createElement("li");
+        li.textContent = `${r.name}: ${"🚴".repeat(r.bikes) || "—"} (${RISK_LABELS[r.bikes]})`;
+        list.appendChild(li);
+      });
+    }
+
+    $("spin-btn").addEventListener("click", () => {
+      const btn = $("spin-btn");
+      const current = racers[spinIndex];
+
+      if (current.bikes !== null) {
+        // Button is in "Next player" / "Start the race!" mode
+        spinIndex++;
+        if (spinIndex < racers.length) {
+          renderSpinScreen();
+        } else {
+          startRace();
+        }
+        return;
+      }
+
+      if (spinning) return;
+      spinning = true;
+      btn.disabled = true;
+
+      const finals = [0, 1, 2].map(() => spinReelSymbol(Math.random));
+      const cyclers = [];
+
+      for (let i = 0; i < 3; i++) {
+        const reel = $(`reel-${i}`);
+        reel.classList.remove("stopped");
+        cyclers[i] = setInterval(() => {
+          reel.textContent = spinReelSymbol(Math.random);
+        }, 60);
+        setTimeout(() => {
+          clearInterval(cyclers[i]);
+          reel.textContent = finals[i];
+          reel.classList.add("stopped");
+          if (i === 2) finishSpin(finals);
+        }, 500 * (i + 1));
+      }
+    });
+
+    function finishSpin(finals) {
+      const current = racers[spinIndex];
+      current.bikes = finals.filter((s) => s === "🚴").length;
+      $("spin-result").textContent = RISK_LABELS[current.bikes];
+      renderScoreboard();
+
+      const btn = $("spin-btn");
+      btn.textContent = spinIndex < racers.length - 1 ? "Next player" : "Start the race! 🏁";
+      btn.disabled = false;
+      spinning = false;
+    }
+
+    /* ---------- Race screen ---------- */
+    function startRace() {
+      showScreen("race");
+
+      const payer = pickPayer(
+        racers.map((r) => ({ name: r.name, weight: crashWeight(r.bikes) })),
+        Math.random
+      );
+      const crashAt = drawCrashTime(Math.random);
+
+      const track = $("track");
+      track.innerHTML = "";
+      const lanes = {};
+      racers.forEach((r) => {
+        const lane = document.createElement("div");
+        lane.className = "lane";
+        lane.innerHTML = `
+          <span class="finish">🏁</span>
+          <span class="rider">
+            <span class="emoji">🚴</span>
+            <span class="tag"></span>
+          </span>`;
+        lane.querySelector(".tag").textContent = r.name;
+        track.appendChild(lane);
+        lanes[r.name] = {
+          rider: lane.querySelector(".rider"),
+          emoji: lane.querySelector(".emoji"),
+          phase: Math.random() * Math.PI * 2,
+          crashed: false,
+        };
+      });
+
+      const trackWidth = () => track.clientWidth - 60; // leave room for the rider + flag
+      const start = performance.now();
+      let done = false;
+
+      function tick(now) {
+        if (done) return;
+        const t = (now - start) / 1000;
+
+        racers.forEach((r) => {
+          const lane = lanes[r.name];
+          const isPayer = r.name === payer;
+
+          if (isPayer && !lane.crashed && t >= crashAt) {
+            lane.crashed = true;
+            lane.emoji.textContent = "💥";
+            setTimeout(() => { lane.emoji.textContent = "🤕"; }, 600);
+          }
+          if (lane.crashed) return;
+
+          const wobble = 0.02 * Math.sin(t * 3 + lane.phase);
+          const progress = Math.min(1, Math.max(0, t / RACE_SECONDS + wobble));
+          lane.rider.style.left = `${progress * trackWidth()}px`;
+        });
+
+        if (t >= RACE_SECONDS) {
+          done = true;
+          clearInterval(fallback);
+          setTimeout(() => finishRace(payer), 600);
+        }
+      }
+
+      // rAF gives smooth motion, but browsers pause it in hidden tabs
+      // (e.g. someone checks a message mid-race) — the interval keeps
+      // game time advancing so the race always resolves.
+      const fallback = setInterval(() => tick(performance.now()), 250);
+      function frame(now) {
+        tick(now);
+        if (!done) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    /* ---------- Result screen ---------- */
+    function finishRace(payer) {
+      history.push({ name: payer, date: new Date().toISOString() });
+      if (history.length > 20) history = history.slice(-20);
+      save("caferace.history", history);
+      renderHistory();
+
+      showScreen("result");
+      const banner = $("result-banner");
+      banner.textContent = `☕ ${payer} crashed — ${payer} pays!`;
+      banner.classList.remove("pop");
+      void banner.offsetWidth;
+      banner.classList.add("pop");
+    }
+
+    $("again-btn").addEventListener("click", () => {
+      showScreen("setup");
+      renderChips();
+    });
+
+    /* ---------- Init ---------- */
+    renderChips();
+    renderHistory();
+    showScreen("setup");
   </script>
 </body>
 </html>
