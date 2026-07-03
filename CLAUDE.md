@@ -4,23 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A single-file Python CLI random number generator (`rng_app.py`). Standard library only — no dependencies, no build step, no test suite.
+A random number generator web app in a single self-contained file, `index.html` — HTML, CSS, and JavaScript all inline. No dependencies, no build step, no server.
 
 ## Running
 
-```
-python rng_app.py
-```
-
-The app is an interactive stdin loop: it repeatedly prompts for a min and max, prints a random integer in that range, and exits on Ctrl+C. Because it blocks on `input()`, it cannot be run interactively from a non-interactive shell — drive it with piped input instead, e.g.:
-
-```
-printf '1\n100\n' | python rng_app.py
-```
-
-Note: when piped stdin runs out, the app currently crashes with an uncaught `EOFError` (only `KeyboardInterrupt` is handled), so a traceback after the last output is expected, not a regression.
+Open `index.html` directly in a browser (double-click, or `Start-Process index.html` from PowerShell). Everything runs client-side.
 
 ## Structure
 
-- `generate_number(low, high)` — the core logic, a thin wrapper over `random.randint`; import this for programmatic use.
-- `main()` — the interactive prompt loop with input validation (non-integer input and min > max are rejected and re-prompted).
+The page is one card: a welcome heading, min/max number inputs, a Generate button, an error line, and an animated result display. The `generate()` function in the inline script validates the inputs (integers required, min ≤ max) and computes the number with `Math.random`. Enter anywhere on the page also triggers generation.

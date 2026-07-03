@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rng — Random Number Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #777;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .inputs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .field {
+      flex: 1;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 0.35rem;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="number"]:focus {
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .error {
+      color: #d33;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      min-height: 1.2rem;
+    }
+
+    .result {
+      margin-top: 1.25rem;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #667eea;
+      min-height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result.pop {
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>👋 Welcome to rng!</h1>
+    <p class="subtitle">Pick a range and I'll generate a random number for you.</p>
+
+    <div class="inputs">
+      <div class="field">
+        <label for="min">Minimum</label>
+        <input type="number" id="min" value="1" step="1">
+      </div>
+      <div class="field">
+        <label for="max">Maximum</label>
+        <input type="number" id="max" value="100" step="1">
+      </div>
+    </div>
+
+    <button id="generate">Generate</button>
+
+    <p class="error" id="error"></p>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const minInput = document.getElementById("min");
+    const maxInput = document.getElementById("max");
+    const errorEl = document.getElementById("error");
+    const resultEl = document.getElementById("result");
+
+    function generate() {
+      errorEl.textContent = "";
+      resultEl.textContent = "";
+
+      const min = parseInt(minInput.value, 10);
+      const max = parseInt(maxInput.value, 10);
+
+      if (Number.isNaN(min) || Number.isNaN(max)) {
+        errorEl.textContent = "Please enter valid integers for both fields.";
+        return;
+      }
+      if (min > max) {
+        errorEl.textContent = "Minimum must not be greater than maximum.";
+        return;
+      }
+
+      const number = Math.floor(Math.random() * (max - min + 1)) + min;
+      resultEl.textContent = number;
+      resultEl.classList.remove("pop");
+      void resultEl.offsetWidth; /* restart the animation on repeat clicks */
+      resultEl.classList.add("pop");
+    }
+
+    document.getElementById("generate").addEventListener("click", generate);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") generate();
+    });
+  </script>
+</body>
+</html>
