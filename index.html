@@ -163,6 +163,101 @@
       min-height: 1.2rem;
     }
 
+    /* Casino stage — dark floor with rotating disco glow behind the machine */
+    #screen-spin {
+      position: relative;
+      padding: 1.1rem 0.9rem 1.3rem;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #1c1140, #341457 45%, #10233f);
+      overflow: hidden;
+    }
+
+    #screen-spin::before {
+      content: "";
+      position: absolute;
+      inset: -45%;
+      background: conic-gradient(from 0deg,
+        rgba(255, 64, 160, 0.18), rgba(64, 200, 255, 0.15),
+        rgba(255, 220, 64, 0.20), rgba(64, 255, 140, 0.15),
+        rgba(179, 64, 255, 0.18), rgba(255, 64, 160, 0.18));
+      animation: discoSpin 9s linear infinite;
+    }
+
+    @keyframes discoSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    #screen-spin > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    #screen-spin h2 {
+      color: #ffe9a8;
+      text-shadow: 0 0 10px rgba(255, 160, 60, 0.55);
+    }
+
+    #screen-spin .spin-result {
+      color: #ffffff;
+    }
+
+    #screen-spin .scoreboard {
+      color: #d9d4f0;
+    }
+
+    .machine-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* Risk meter — RISKY at the top, SAFE at the bottom */
+    .risk-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 0.8rem 0 1rem;
+    }
+
+    .risk-lab {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #ffe9a8;
+      text-shadow: 0 0 6px rgba(255, 160, 60, 0.6);
+    }
+
+    .risk-meter {
+      flex: 1;
+      width: 26px;
+      position: relative;
+      border-radius: 8px;
+      border: 2px solid #d4a437;
+      background: linear-gradient(180deg, #e5484d 0%, #f5a623 50%, #3ddc84 100%);
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45);
+    }
+
+    .risk-thumb {
+      position: absolute;
+      left: -7px;
+      right: -7px;
+      height: 12px;
+      background: #ffffff;
+      border: 2px solid #333;
+      border-radius: 5px;
+      top: calc(50% - 6px);
+      transition: top 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.15), background 0.3s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .risk-thumb.immune {
+      background: linear-gradient(135deg, #ffd76a, #f0a832);
+      border-color: #8e5a12;
+      box-shadow: 0 0 12px rgba(255, 215, 106, 0.9);
+    }
+
     /* Slot machine cabinet */
     .machine {
       margin: 1.25rem auto;
@@ -198,52 +293,68 @@
       50% { opacity: 1; box-shadow: 0 0 6px #ffd76a; }
     }
 
-    .slot-area {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .payline-marker {
-      color: #ffd76a;
-      font-size: 0.75rem;
-      text-shadow: 0 0 4px rgba(255, 215, 106, 0.7);
+    .jackpot-banner {
+      display: block;
+      margin: 0 auto 10px;
+      padding: 0.25rem 1.2rem;
+      width: fit-content;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #ffe9a8;
+      background: linear-gradient(180deg, #c9332f, #7e1a1a);
+      border: 2px solid #ffd76a;
+      border-radius: 999px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 10px rgba(255, 215, 106, 0.55);
+      box-shadow: 0 0 14px rgba(255, 160, 60, 0.45);
     }
 
     .slot {
       display: flex;
-      gap: 8px;
-      flex: 1;
+      gap: 6px;
       justify-content: center;
+      padding: 8px;
+      background: #171c3a;
+      border-radius: 12px;
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.7);
     }
 
     .reel-window {
-      width: 74px;
-      height: 156px;
+      width: 58px;
+      height: 208px;
       overflow: hidden;
       position: relative;
-      background: #fdfdfd;
-      border: 3px solid #caa53d;
-      border-radius: 10px;
-      box-shadow: inset 0 12px 14px rgba(0, 0, 0, 0.18),
-                  inset 0 -12px 14px rgba(0, 0, 0, 0.18);
-    }
-
-    .reel-window::after {
-      /* payline band across the middle row */
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 52px;
-      height: 52px;
-      border-top: 1px dashed rgba(212, 164, 55, 0.6);
-      border-bottom: 1px dashed rgba(212, 164, 55, 0.6);
-      pointer-events: none;
+      background: linear-gradient(180deg, #fdf6e6, #f7ead0);
+      border: 2px solid #caa53d;
+      border-radius: 8px;
+      box-shadow: inset 0 10px 12px rgba(0, 0, 0, 0.2),
+                  inset 0 -10px 12px rgba(0, 0, 0, 0.2);
     }
 
     .reel-window.stopped {
-      border-color: #8e2431;
+      border-color: #ffd76a;
+      box-shadow: inset 0 10px 12px rgba(0, 0, 0, 0.2),
+                  inset 0 -10px 12px rgba(0, 0, 0, 0.2),
+                  0 0 10px rgba(255, 215, 106, 0.7);
+    }
+
+    .machine {
+      position: relative;
+    }
+
+    .jackpot-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #ffe9a8;
+      text-shadow: 0 0 12px #ff9d2e, 0 2px 4px rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle, rgba(126, 26, 26, 0.85) 0%, rgba(23, 28, 58, 0.9) 75%);
+      border-radius: 13px;
+      pointer-events: none;
     }
 
     .strip {
@@ -262,7 +373,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.9rem;
+      font-size: 1.7rem;
     }
 
     .spin-result {
@@ -283,51 +394,104 @@
       padding: 0.15rem 0;
     }
 
-    /* Race track */
-    .track {
-      margin: 1rem 0;
-      text-align: left;
-    }
-
-    .lane {
+    /* Race — top-down following camera */
+    .race-viewport {
       position: relative;
-      height: 44px;
-      border-bottom: 2px dashed #e2e2ee;
+      height: 340px;
+      margin: 1rem 0;
       overflow: hidden;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #4ca158, #3e8e4a);
+      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.25);
     }
 
-    .lane:last-child {
-      border-bottom: none;
-    }
-
-    .lane .finish {
+    .road {
       position: absolute;
-      right: 4px;
-      top: 8px;
-      font-size: 1.4rem;
-      opacity: 0.6;
+      left: 10%;
+      right: 10%;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, #565b63, #6a707a 50%, #565b63);
+      border-left: 4px solid #f5f2e8;
+      border-right: 4px solid #f5f2e8;
     }
 
-    .rider {
+    .road-line {
       position: absolute;
-      left: 0;
-      top: 4px;
+      top: -64px;
+      bottom: -64px;
+      width: 6px;
+      transform: translateX(-50%);
+      background-image: repeating-linear-gradient(180deg,
+        #f5f2e8 0 28px, transparent 28px 64px);
+    }
+
+    .scenery {
+      position: absolute;
+      top: 0;
+      font-size: 1.5rem;
+      z-index: 2;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+    }
+
+    .finish-line {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 0;
+      padding: 2px 0;
+      text-align: center;
+      font-size: 1.05rem;
+      letter-spacing: 6px;
+      background: repeating-linear-gradient(90deg, #fff 0 12px, #222 12px 24px);
+      z-index: 2;
+    }
+
+    .cyclist {
+      position: absolute;
+      top: 0;
+      margin-left: -13px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: none;
+      z-index: 3;
     }
 
-    .rider .emoji {
-      font-size: 1.5rem;
-      line-height: 1.1;
+    .cyclist svg {
+      transition: transform 0.5s ease, opacity 0.5s;
     }
 
-    .rider .tag {
-      font-size: 0.62rem;
-      color: #666;
-      font-weight: 600;
+    .cyclist.crashed svg {
+      transform: rotate(130deg);
+      opacity: 0.85;
+    }
+
+    .cyclist .tag {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #222;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 999px;
+      padding: 0 6px;
+      margin-bottom: 2px;
       white-space: nowrap;
+    }
+
+    .crash-burst {
+      position: absolute;
+      top: 8px;
+      font-size: 1.7rem;
+      z-index: 4;
+      animation: pop 0.3s ease;
+    }
+
+    .protestor {
+      position: absolute;
+      top: 0;
+      margin-left: -14px;
+      font-size: 1.5rem;
+      z-index: 3;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
     }
 
     /* Result */
@@ -399,19 +563,29 @@
     <!-- Screen 2: slot machine spins -->
     <section id="screen-spin" class="hidden">
       <h2 id="spin-title"></h2>
-      <div class="machine">
-        <div class="lights">
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <div class="slot-area">
-          <span class="payline-marker">▶</span>
+      <div class="machine-row">
+        <div class="machine">
+          <div class="lights">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <span class="jackpot-banner">★ CAFE JACKPOT ★</span>
           <div class="slot">
             <div class="reel-window" id="window-0"><div class="strip" id="strip-0"></div></div>
             <div class="reel-window" id="window-1"><div class="strip" id="strip-1"></div></div>
             <div class="reel-window" id="window-2"><div class="strip" id="strip-2"></div></div>
+            <div class="reel-window" id="window-3"><div class="strip" id="strip-3"></div></div>
           </div>
-          <span class="payline-marker">◀</span>
+          <div class="lights" style="margin: 10px 6px 0;">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="jackpot-overlay hidden" id="jackpot-overlay"></div>
+        </div>
+        <div class="risk-side">
+          <span class="risk-lab">RISKY</span>
+          <div class="risk-meter"><div class="risk-thumb" id="risk-thumb"></div></div>
+          <span class="risk-lab">SAFE</span>
         </div>
       </div>
       <p class="spin-result" id="spin-result"></p>
@@ -422,7 +596,7 @@
     <!-- Screen 3: race -->
     <section id="screen-race" class="hidden">
       <h2>🏁 And they're off!</h2>
-      <div class="track" id="track"></div>
+      <div class="race-viewport" id="race-viewport"></div>
     </section>
 
     <!-- Screen 4: result -->
@@ -437,17 +611,22 @@
     const RACE_SECONDS = 10;
     const CRASH_MIN = 2, CRASH_MAX = 9;
     const BIKE_CHANCE = 1 / 3;
-    const OTHER_SYMBOLS = ["☕", "🍰", "⭐", "🔔"];
-    const RISK_LABELS = [
-      "😬 no bikes — high crash risk!",
-      "🚴 one bike — risky ride",
-      "🚴🚴 two bikes — low crash risk",
-      "🍀 three bikes — super safe!",
-    ];
+    const OTHER_SYMBOLS = ["☕", "🥐", "🍰", "🥖", "🧁"];
+    const GRID_COLS = 4, GRID_ROWS = 4; // 16 symbols per spin
 
     /* ---------- Pure game logic (kept DOM-free for testing) ---------- */
     function crashWeight(bikes) {
-      return 8 / Math.pow(2, bikes); // 0,1,2,3 bikes -> 8,4,2,1
+      // 0-16 bikes; every 4 bikes halves your crash odds (0 -> 8, 16 -> 0.5)
+      return 8 * Math.pow(2, -bikes / 4);
+    }
+
+    function hasBikeRow(columns) {
+      // columns: GRID_COLS arrays of GRID_ROWS symbols. A full horizontal
+      // row of bikes across all columns grants immunity from paying.
+      for (let r = 0; r < GRID_ROWS; r++) {
+        if (columns.every((col) => col[r] === "🚴")) return true;
+      }
+      return false;
     }
 
     function spinReelSymbol(rand) {
@@ -599,14 +778,14 @@
         $("setup-error").textContent = "You need at least 2 players ticked to race.";
         return;
       }
-      racers = present.map((p) => ({ name: p.name, bikes: null }));
+      racers = present.map((p) => ({ name: p.name, bikes: null, immune: false }));
       spinIndex = 0;
       showScreen("spin");
       renderSpinScreen();
     });
 
     const REEL_CELL = 52; // must match .cell height in CSS
-    const REEL_DURATIONS = [1.4, 2.0, 2.6]; // reels stop left to right
+    const REEL_DURATIONS = [1.2, 1.6, 2.0, 2.4]; // columns stop left to right
 
     function cellEl(symbol) {
       const div = document.createElement("div");
@@ -622,8 +801,7 @@
       strip.style.transition = "none";
       strip.style.transform = "translateY(0)";
       strip.innerHTML = "";
-      [spinReelSymbol(Math.random), "❔", spinReelSymbol(Math.random)]
-        .forEach((s) => strip.appendChild(cellEl(s)));
+      for (let r = 0; r < GRID_ROWS; r++) strip.appendChild(cellEl("❔"));
     }
 
     function renderSpinScreen() {
@@ -632,8 +810,20 @@
       $("spin-result").textContent = "";
       $("spin-btn").textContent = "Spin";
       $("spin-btn").disabled = false;
-      for (let i = 0; i < 3; i++) resetReel(i);
+      $("jackpot-overlay").classList.add("hidden");
+      const thumb = $("risk-thumb");
+      thumb.classList.remove("immune");
+      thumb.style.top = "calc(50% - 6px)";
+      for (let i = 0; i < GRID_COLS; i++) resetReel(i);
       renderScoreboard();
+    }
+
+    function setRiskMeter(bikes, immune) {
+      const thumb = $("risk-thumb");
+      thumb.classList.toggle("immune", immune);
+      // 0 bikes -> top (RISKY), 16 bikes or immunity -> bottom (SAFE)
+      const frac = immune ? 1 : bikes / (GRID_COLS * GRID_ROWS);
+      thumb.style.top = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 12).toFixed(1)}px)`;
     }
 
     /* Casino sounds — tiny synthesized tones, silently skipped if audio is unavailable */
@@ -660,7 +850,9 @@
       racers.forEach((r) => {
         if (r.bikes === null) return;
         const li = document.createElement("li");
-        li.textContent = `${r.name}: ${"🚴".repeat(r.bikes) || "—"} (${RISK_LABELS[r.bikes]})`;
+        li.textContent = r.immune
+          ? `${r.name}: ${r.bikes}×🚴 — 🛡️ IMMUNE (full bike row)`
+          : `${r.name}: ${r.bikes}×🚴 — race weight ${crashWeight(r.bikes).toFixed(2)}`;
         list.appendChild(li);
       });
     }
@@ -683,22 +875,26 @@
       if (spinning) return;
       spinning = true;
       btn.disabled = true;
+      $("jackpot-overlay").classList.add("hidden");
 
-      const finals = [0, 1, 2].map(() => spinReelSymbol(Math.random));
+      // 16 finals: one column of GRID_ROWS symbols per reel
+      const finals = Array.from({ length: GRID_COLS }, () =>
+        Array.from({ length: GRID_ROWS }, () => spinReelSymbol(Math.random))
+      );
 
       // Reel ticking while anything is still spinning
       const ticker = setInterval(() => playTone(1400, 0.03, "square", 0.015), 95);
 
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < GRID_COLS; i++) {
         const strip = $(`strip-${i}`);
         const durationMs = REEL_DURATIONS[i] * 1000;
 
         // Rebuild the strip: current visible cells, a run of filler symbols,
-        // then the final window with the result on the middle (payline) row.
+        // then the final column of symbols at the end.
         const symbols = [...strip.children].map((c) => c.textContent);
-        const fillers = 12 + i * 6; // later reels travel further
+        const fillers = 12 + i * 5; // later columns travel further
         for (let n = 0; n < fillers; n++) symbols.push(spinReelSymbol(Math.random));
-        symbols.push(spinReelSymbol(Math.random), finals[i], spinReelSymbol(Math.random));
+        symbols.push(...finals[i]);
 
         strip.innerHTML = "";
         symbols.forEach((s) => strip.appendChild(cellEl(s)));
@@ -710,13 +906,13 @@
         void strip.offsetHeight;
         strip.classList.add("blur");
         strip.style.transition = `transform ${REEL_DURATIONS[i]}s cubic-bezier(0.15, 0.85, 0.25, 1.04)`;
-        strip.style.transform = `translateY(-${(symbols.length - 3) * REEL_CELL}px)`;
+        strip.style.transform = `translateY(-${(symbols.length - GRID_ROWS) * REEL_CELL}px)`;
 
         setTimeout(() => strip.classList.remove("blur"), durationMs * 0.6);
         setTimeout(() => {
           $(`window-${i}`).classList.add("stopped");
-          playTone(620 + i * 140, 0.15, "triangle", 0.05);
-          if (i === 2) {
+          playTone(620 + i * 120, 0.15, "triangle", 0.05);
+          if (i === GRID_COLS - 1) {
             clearInterval(ticker);
             finishSpin(finals);
           }
@@ -726,16 +922,38 @@
 
     function finishSpin(finals) {
       const current = racers[spinIndex];
-      current.bikes = finals.filter((s) => s === "🚴").length;
-      $("spin-result").textContent = RISK_LABELS[current.bikes];
-      renderScoreboard();
+      current.bikes = finals.flat().filter((s) => s === "🚴").length;
+      current.immune = hasBikeRow(finals);
+      setRiskMeter(current.bikes, current.immune);
 
-      if (current.bikes >= 2) {
-        // Little jackpot fanfare for a lucky spin
-        [523, 659, 784, current.bikes === 3 ? 1047 : null].forEach((f, i) => {
-          if (f) setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110);
-        });
+      if (current.immune) {
+        $("spin-result").textContent = `🛡️ ${current.bikes}× 🚴 — race weight 0, you can't be picked!`;
+        const overlay = $("jackpot-overlay");
+        overlay.textContent = "🛡️ FULL BIKE ROW — IMMUNITY!";
+        overlay.classList.remove("hidden");
+        overlay.classList.remove("pop");
+        void overlay.offsetWidth;
+        overlay.classList.add("pop");
+        [523, 659, 784, 1047, 1319].forEach((f, i) =>
+          setTimeout(() => playTone(f, 0.2, "triangle", 0.07), i * 110));
+      } else {
+        $("spin-result").textContent =
+          `${current.bikes}× 🚴 → race weight ${crashWeight(current.bikes).toFixed(2)} (lower = safer)`;
+        if (current.bikes >= 9) {
+          const overlay = $("jackpot-overlay");
+          overlay.textContent = `🎰 JACKPOT! ${current.bikes}× 🚴`;
+          overlay.classList.remove("hidden");
+          overlay.classList.remove("pop");
+          void overlay.offsetWidth;
+          overlay.classList.add("pop");
+          [523, 659, 784, 1047].forEach((f, i) =>
+            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
+        } else if (current.bikes >= 6) {
+          [523, 659, 784].forEach((f, i) =>
+            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
+        }
       }
+      renderScoreboard();
 
       const btn = $("spin-btn");
       btn.textContent = spinIndex < racers.length - 1 ? "Next player" : "Start the race! 🏁";
@@ -743,39 +961,100 @@
       spinning = false;
     }
 
-    /* ---------- Race screen ---------- */
+    /* ---------- Race screen (top-down following camera) ---------- */
+    const HELMET_COLORS = ["#e5484d", "#3b82f6", "#22c55e", "#f59e0b",
+                           "#a855f7", "#06b6d4", "#ec4899", "#8b5e34"];
+
+    function cyclistSVG(color) {
+      // A cartoon cyclist seen from above, riding upward:
+      // two wheels, frame, handlebars, arms out to the bars, jersey, helmet.
+      return `
+        <svg width="26" height="44" viewBox="0 0 26 44">
+          <ellipse cx="13" cy="7" rx="3" ry="6.5" fill="#222"/>
+          <ellipse cx="13" cy="37" rx="3" ry="6.5" fill="#222"/>
+          <rect x="11.8" y="7" width="2.4" height="30" rx="1.2" fill="#777"/>
+          <rect x="4" y="13.5" width="18" height="3.4" rx="1.7" fill="#555"/>
+          <ellipse cx="7.5" cy="18" rx="2.4" ry="4.5" fill="#f3c09a"/>
+          <ellipse cx="18.5" cy="18" rx="2.4" ry="4.5" fill="#f3c09a"/>
+          <ellipse cx="13" cy="26" rx="7" ry="10" fill="${color}"/>
+          <circle cx="13" cy="19" r="5" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+        </svg>`;
+    }
+
     function startRace() {
       showScreen("race");
 
-      const payer = pickPayer(
-        racers.map((r) => ({ name: r.name, weight: crashWeight(r.bikes) })),
-        Math.random
-      );
+      // Immune riders (full bike row) are excluded from the draw entirely.
+      // If somehow everyone is immune, fall back to equal odds — the cafe
+      // still needs paying for.
+      let candidates = racers.filter((r) => !r.immune)
+        .map((r) => ({ name: r.name, weight: crashWeight(r.bikes) }));
+      if (candidates.length === 0) {
+        candidates = racers.map((r) => ({ name: r.name, weight: 1 }));
+      }
+      const payer = pickPayer(candidates, Math.random);
       const crashAt = drawCrashTime(Math.random);
 
-      const track = $("track");
-      track.innerHTML = "";
-      const lanes = {};
-      racers.forEach((r) => {
-        const lane = document.createElement("div");
-        lane.className = "lane";
-        lane.innerHTML = `
-          <span class="finish">🏁</span>
-          <span class="rider">
-            <span class="emoji">🚴</span>
-            <span class="tag"></span>
-          </span>`;
-        lane.querySelector(".tag").textContent = r.name;
-        track.appendChild(lane);
-        lanes[r.name] = {
-          rider: lane.querySelector(".rider"),
-          emoji: lane.querySelector(".emoji"),
+      const vp = $("race-viewport");
+      vp.innerHTML = "";
+      const VH = vp.clientHeight || 340;
+
+      // Road with a scrolling dashed centre line and two lane lines
+      const road = document.createElement("div");
+      road.className = "road";
+      vp.appendChild(road);
+      const lines = ["25%", "50%", "75%"].map((left) => {
+        const l = document.createElement("div");
+        l.className = "road-line";
+        l.style.left = left;
+        road.appendChild(l);
+        return l;
+      });
+
+      // Roadside scenery wraps around as the camera moves up the course
+      const WRAP = VH + 140;
+      const sceneryEmoji = ["🌳", "🌲", "🌳", "🌼", "🪨", "🌲", "☕", "🌳"];
+      const scenery = sceneryEmoji.map((s, i) => {
+        const el = document.createElement("span");
+        el.className = "scenery";
+        el.textContent = s;
+        const leftSide = i % 2 === 0;
+        el.style.left = leftSide
+          ? `${1 + Math.random() * 4}%`
+          : `${90 + Math.random() * 5}%`;
+        vp.appendChild(el);
+        return { el, base: (i / sceneryEmoji.length) * WRAP + Math.random() * 30 };
+      });
+
+      const finish = document.createElement("div");
+      finish.className = "finish-line";
+      vp.appendChild(finish);
+
+      // Riders spread across the road, each with its own wobble character
+      const riders = racers.map((r, i) => {
+        const el = document.createElement("div");
+        el.className = "cyclist";
+        el.innerHTML =
+          `<span class="tag">${r.immune ? r.name + " 🛡️" : r.name}</span>` +
+          cyclistSVG(HELMET_COLORS[i % HELMET_COLORS.length]);
+        vp.appendChild(el);
+        return {
+          name: r.name,
+          el,
+          xPct: 14 + 72 * ((i + 1) / (racers.length + 1)),
           phase: Math.random() * Math.PI * 2,
+          amp: 0.015 + Math.random() * 0.02,
+          freq: 1.5 + Math.random() * 1.5,
+          progress: 0,
           crashed: false,
         };
       });
 
-      const trackWidth = () => track.clientWidth - 60; // leave room for the rider + flag
+      const SCALE = 1400;  // pixels of road per unit of race progress
+      const CAM_Y = 200;   // camera hangs back — leader rides this far down, road ahead visible
+      const PROTEST_LEAD = 1.2; // seconds the protestor runs before impact
+      const payerRider = riders.find((rd) => rd.name === payer);
+      const protestor = { el: null, startX: 0, worldP: 0 };
       const start = performance.now();
       let done = false;
 
@@ -783,26 +1062,66 @@
         if (done) return;
         const t = (now - start) / 1000;
 
-        racers.forEach((r) => {
-          const lane = lanes[r.name];
-          const isPayer = r.name === payer;
-
-          if (isPayer && !lane.crashed && t >= crashAt) {
-            lane.crashed = true;
-            lane.emoji.textContent = "💥";
-            setTimeout(() => { lane.emoji.textContent = "🤕"; }, 600);
+        let cam = 0;
+        riders.forEach((rd) => {
+          if (rd.name === payer && !rd.crashed && t >= crashAt) {
+            rd.crashed = true; // progress freezes — they fall behind the camera
+            rd.el.classList.add("crashed");
+            const burst = document.createElement("span");
+            burst.className = "crash-burst";
+            burst.textContent = "💥";
+            rd.el.appendChild(burst);
+            playTone(160, 0.4, "sawtooth", 0.08);
+            protestor.worldP = rd.progress; // protestor plants themselves at the crash site
           }
-          if (lane.crashed) return;
-
-          const wobble = 0.02 * Math.sin(t * 3 + lane.phase);
-          const progress = Math.min(1, Math.max(0, t / RACE_SECONDS + wobble));
-          lane.rider.style.left = `${progress * trackWidth()}px`;
+          if (!rd.crashed) {
+            rd.progress = Math.min(1, Math.max(0,
+              t / RACE_SECONDS + rd.amp * Math.sin(t * rd.freq + rd.phase)));
+            cam = Math.max(cam, rd.progress);
+          }
         });
+
+        // The camera tracks the leader; the world scrolls down past it
+        const roadOffset = cam * SCALE;
+        lines.forEach((l) => { l.style.backgroundPositionY = `${roadOffset % 64}px`; });
+        scenery.forEach((s) => {
+          s.el.style.transform = `translateY(${((s.base + roadOffset) % WRAP) - 70}px)`;
+        });
+        finish.style.transform = `translateY(${CAM_Y + (cam - 1) * SCALE}px)`;
+
+        riders.forEach((rd) => {
+          const y = CAM_Y + (cam - rd.progress) * SCALE;
+          const steer = rd.crashed ? 0 : Math.sin(t * 2 + rd.phase) * 1.2;
+          rd.el.style.left = `${rd.xPct + steer}%`;
+          rd.el.style.transform = `translateY(${Math.min(y, VH + 60)}px)`;
+        });
+
+        // A protestor storms in from the roadside and takes the payer out
+        if (!protestor.el && t >= crashAt - PROTEST_LEAD) {
+          protestor.el = document.createElement("span");
+          protestor.el.className = "protestor";
+          protestor.el.textContent = "🪧🧍";
+          vp.appendChild(protestor.el);
+          protestor.startX = payerRider.xPct < 50 ? 96 : 0;
+          playTone(300, 0.12, "square", 0.05);
+          setTimeout(() => playTone(340, 0.12, "square", 0.05), 150);
+        }
+        if (protestor.el) {
+          const u = Math.min(1, Math.max(0, (t - (crashAt - PROTEST_LEAD)) / PROTEST_LEAD));
+          const x = protestor.startX + (payerRider.xPct - protestor.startX) * u;
+          // Runs level with the rider to intercept; after impact they stand
+          // at the crash site and scroll away behind the pack.
+          const y = payerRider.crashed
+            ? CAM_Y + (cam - protestor.worldP) * SCALE
+            : CAM_Y + (cam - payerRider.progress) * SCALE;
+          protestor.el.style.left = `${x}%`;
+          protestor.el.style.transform = `translateY(${Math.min(y, VH + 60)}px)`;
+        }
 
         if (t >= RACE_SECONDS) {
           done = true;
           clearInterval(fallback);
-          setTimeout(() => finishRace(payer), 600);
+          setTimeout(() => finishRace(payer), 800);
         }
       }
 
@@ -826,7 +1145,7 @@
 
       showScreen("result");
       const banner = $("result-banner");
-      banner.textContent = `☕ ${payer} crashed — ${payer} pays!`;
+      banner.textContent = `🪧💥 A protestor took out ${payer} — ${payer} pays! ☕`;
       banner.classList.remove("pop");
       void banner.offsetWidth;
       banner.classList.add("pop");
