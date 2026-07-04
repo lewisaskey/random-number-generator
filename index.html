@@ -18,39 +18,46 @@
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 1rem;
+      padding: 0.5rem;
     }
 
     .card {
       background: #ffffff;
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      padding: 2.5rem;
+      padding: 0.75rem 1.5rem;
       width: 100%;
       max-width: 520px;
       text-align: center;
     }
 
     h1 {
-      font-size: 1.6rem;
+      font-size: 1.35rem;
       color: #333;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.25rem;
     }
 
     h2 {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       color: #333;
-      margin-bottom: 1rem;
+      margin-bottom: 0.4rem;
     }
 
     .subtitle {
       color: #777;
       font-size: 0.95rem;
-      margin-bottom: 2rem;
+      margin-bottom: 0.75rem;
     }
 
     .hidden {
       display: none !important;
+    }
+
+    /* During the spin the machine needs every pixel — the app title makes
+       way so the whole cabinet fits on screen without scrolling */
+    .card.stage-mode h1,
+    .card.stage-mode .subtitle {
+      display: none;
     }
 
     input[type="text"] {
@@ -166,7 +173,7 @@
     /* Casino stage — dark floor with rotating disco glow behind the machine */
     #screen-spin {
       position: relative;
-      padding: 1.1rem 0.9rem 1.3rem;
+      padding: 0.7rem 0.9rem 0.8rem;
       border-radius: 14px;
       background: linear-gradient(160deg, #1c1140, #341457 45%, #10233f);
       overflow: hidden;
@@ -260,7 +267,7 @@
 
     /* Slot machine cabinet */
     .machine {
-      margin: 1.25rem auto;
+      margin: 0.6rem auto;
       padding: 0.8rem 0.8rem 1rem;
       max-width: 320px;
       background: linear-gradient(160deg, #4a1a7a, #2a0f52);
@@ -298,7 +305,7 @@
       margin: 0 auto 10px;
       padding: 0.25rem 1.2rem;
       width: fit-content;
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: 800;
       letter-spacing: 0.12em;
       color: #d9fbff;
@@ -320,8 +327,8 @@
     }
 
     .reel-window {
-      width: 52px;
-      height: 260px;
+      width: 48px;
+      height: 180px;
       overflow: hidden;
       position: relative;
       background: linear-gradient(180deg, #fdf6e6, #f7ead0);
@@ -340,6 +347,33 @@
 
     .machine {
       position: relative;
+    }
+
+    /* The big casino button sits dead centre on the machine; it vanishes
+       while the reels spin and returns when they settle */
+    #spin-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      padding: 0.9rem 1.7rem;
+      font-size: 1.1rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff5ce1, #7a2ce0);
+      border: 2px solid #37e6ff;
+      box-shadow: 0 0 18px rgba(255, 92, 225, 0.55),
+                  0 4px 12px rgba(0, 0, 0, 0.45);
+      white-space: nowrap;
+    }
+
+    #spin-btn:hover:not(:disabled) {
+      box-shadow: 0 0 24px rgba(55, 230, 255, 0.7),
+                  0 4px 12px rgba(0, 0, 0, 0.45);
+    }
+
+    #spin-btn:active:not(:disabled) {
+      transform: translate(-50%, -50%) scale(0.96);
     }
 
     .jackpot-overlay {
@@ -368,24 +402,24 @@
     }
 
     .cell {
-      height: 52px;
+      height: 36px;
       flex: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.7rem;
+      font-size: 1.3rem;
     }
 
     .spin-result {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: #555;
-      min-height: 1.5rem;
-      margin-bottom: 0.5rem;
+      min-height: 1.3rem;
+      margin-bottom: 0.25rem;
     }
 
     .scoreboard {
       list-style: none;
-      margin-top: 1.25rem;
+      margin-top: 0.25rem;
       color: #666;
       font-size: 0.92rem;
     }
@@ -548,73 +582,6 @@
       min-height: 1.4rem;
     }
 
-    .photo-label {
-      display: inline-block;
-      margin: 0.75rem 0 0.25rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #667eea;
-      border: 2px dashed #667eea;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .hidden-input {
-      display: none;
-    }
-
-    .crying-frame {
-      position: relative;
-      width: 210px;
-      margin: 0.9rem auto 0.4rem;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .crying-frame img {
-      display: block;
-      width: 100%;
-      filter: grayscale(0.8) brightness(0.92) contrast(1.05) sepia(0.15) hue-rotate(180deg);
-    }
-
-    .crying-frame .sob {
-      position: absolute;
-      top: 6px;
-      right: 8px;
-      font-size: 1.8rem;
-    }
-
-    .tear {
-      position: absolute;
-      top: 20%;
-      font-size: 1.2rem;
-      animation: tearfall 1.6s ease-in infinite;
-    }
-
-    .tear.t1 { left: 22%; animation-delay: 0s; }
-    .tear.t2 { left: 48%; animation-delay: 0.55s; }
-    .tear.t3 { left: 72%; animation-delay: 1.1s; }
-
-    @keyframes tearfall {
-      0% { transform: translateY(0); opacity: 0; }
-      15% { opacity: 1; }
-      100% { transform: translateY(110px); opacity: 0; }
-    }
-
-    .crying-caption {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 0.3rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #fff;
-      background: rgba(20, 20, 40, 0.75);
-    }
-
     details {
       margin-top: 1.5rem;
       text-align: left;
@@ -635,18 +602,6 @@
 
     details li {
       padding: 0.15rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-
-    .history-thumb {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #ddd;
-      flex: none;
     }
 
     details .clear {
@@ -698,6 +653,7 @@
             <span></span><span></span><span></span><span></span><span></span>
           </div>
           <div class="jackpot-overlay hidden" id="jackpot-overlay"></div>
+          <button id="spin-btn">Spin</button>
         </div>
         <div class="risk-side">
           <span class="risk-lab">RISKY</span>
@@ -706,7 +662,6 @@
         </div>
       </div>
       <p class="spin-result" id="spin-result"></p>
-      <button class="primary" id="spin-btn">Spin</button>
       <ul class="scoreboard" id="scoreboard"></ul>
     </section>
 
@@ -730,16 +685,6 @@
     <section id="screen-result" class="hidden">
       <p class="result-joke" id="result-joke"></p>
       <div class="banner" id="result-banner"></div>
-      <label class="photo-label" for="payer-photo" id="photo-label">📷 Add a photo for the crying portrait</label>
-      <input type="file" id="payer-photo" accept="image/*" class="hidden-input">
-      <div class="crying-frame hidden" id="crying-frame">
-        <img id="crying-img" alt="The unlucky payer">
-        <span class="tear t1">💧</span>
-        <span class="tear t2">💧</span>
-        <span class="tear t3">💧</span>
-        <span class="sob">😭</span>
-        <span class="crying-caption" id="crying-caption"></span>
-      </div>
       <button class="primary" id="again-btn">Race again</button>
     </section>
   </div>
@@ -839,6 +784,7 @@
       for (const [key, el] of Object.entries(screens)) {
         el.classList.toggle("hidden", key !== name);
       }
+      document.querySelector(".card").classList.toggle("stage-mode", name === "spin");
     }
 
     /* ---------- Setup screen ---------- */
@@ -891,14 +837,7 @@
         const date = new Date(h.date).toLocaleDateString(undefined, {
           day: "numeric", month: "short", year: "numeric",
         });
-        if (h.photo) {
-          const img = document.createElement("img");
-          img.className = "history-thumb";
-          img.src = h.photo;
-          img.alt = h.name;
-          li.appendChild(img);
-        }
-        li.appendChild(document.createTextNode(`☕ ${h.name} — ${date}`));
+        li.textContent = `☕ ${h.name} — ${date}`;
         list.appendChild(li);
       });
     }
@@ -948,7 +887,7 @@
       renderSpinScreen();
     });
 
-    const REEL_CELL = 52; // must match .cell height in CSS
+    const REEL_CELL = 36; // must match .cell height in CSS
     const REEL_DURATIONS = [1.2, 1.6, 2.0, 2.4, 2.8]; // columns stop left to right
 
     function cellEl(symbol) {
@@ -973,7 +912,7 @@
       $("spin-title").textContent = `${current.name} — your spin!`;
       $("spin-result").textContent = "";
       $("spin-btn").textContent = "Spin";
-      $("spin-btn").disabled = false;
+      $("spin-btn").classList.remove("hidden");
       $("jackpot-overlay").classList.add("hidden");
       const thumb = $("risk-thumb");
       thumb.classList.remove("immune");
@@ -990,7 +929,7 @@
       thumb.style.top = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 12).toFixed(1)}px)`;
     }
 
-    /* Casino sounds — tiny synthesized tones, silently skipped if audio is unavailable */
+    /* Casino sounds — synthesized in WebAudio, silently skipped if audio is unavailable */
     let audioCtx = null;
     function playTone(freq, duration, type, volume) {
       try {
@@ -1008,11 +947,64 @@
       } catch {}
     }
 
+    function playSweep(from, to, duration, type, volume) {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(from, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(to, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch {}
+    }
+
+    // A dragon-temple gong: stacked inharmonic partials with a long decay
+    function playGong(freq, volume) {
+      [[1, 1.6], [2.01, 1.1], [2.92, 0.7], [4.16, 0.45]].forEach(([mult, dur], i) =>
+        playTone(freq * mult, dur, "sine", (volume || 0.1) / (i + 1)));
+    }
+
+    // Low tension drone that swells underneath the spinning reels
+    let drone = null;
+    function startDrone(seconds) {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + seconds);
+        gain.connect(audioCtx.destination);
+        const oscs = [55, 55.8, 110.4].map((f) => {
+          const o = audioCtx.createOscillator();
+          o.type = "sawtooth";
+          o.frequency.value = f;
+          o.connect(gain);
+          o.start();
+          return o;
+        });
+        drone = { oscs, gain };
+      } catch {}
+    }
+
+    function stopDrone() {
+      if (!drone) return;
+      try {
+        drone.gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
+        drone.oscs.forEach((o) => o.stop(audioCtx.currentTime + 0.45));
+      } catch {}
+      drone = null;
+    }
+
     function renderScoreboard() {
       const list = $("scoreboard");
       list.innerHTML = "";
       racers.forEach((r) => {
-        if (r.bikes === null) return;
+        if (r.dollars === null) return;
         const li = document.createElement("li");
         li.textContent = r.immune
           ? `${r.name}: ${r.dollars}×💲 — 🛡️ IMMUNE (full 💲 row)`
@@ -1038,7 +1030,7 @@
 
       if (spinning) return;
       spinning = true;
-      btn.disabled = true;
+      btn.classList.add("hidden"); // out of the way while the reels run
       $("jackpot-overlay").classList.add("hidden");
 
       // 25 finals: one column of GRID_ROWS symbols per reel
@@ -1046,8 +1038,16 @@
         Array.from({ length: GRID_ROWS }, () => spinReelSymbol(Math.random))
       );
 
-      // Reel ticking while anything is still spinning
-      const ticker = setInterval(() => playTone(1400, 0.03, "square", 0.015), 95);
+      // Launch whoosh, tension drone, and a rising tick with a heartbeat
+      // thump underneath — dragon-machine drama while anything still spins
+      playSweep(120, 620, 0.5, "triangle", 0.06);
+      startDrone(REEL_DURATIONS[GRID_COLS - 1]);
+      let tick = 0;
+      const ticker = setInterval(() => {
+        tick++;
+        playTone(900 + tick * 18, 0.03, "square", 0.015);
+        if (tick % 5 === 0) playTone(58, 0.22, "sine", 0.12);
+      }, 95);
 
       for (let i = 0; i < GRID_COLS; i++) {
         const strip = $(`strip-${i}`);
@@ -1075,9 +1075,10 @@
         setTimeout(() => strip.classList.remove("blur"), durationMs * 0.6);
         setTimeout(() => {
           $(`window-${i}`).classList.add("stopped");
-          playTone(620 + i * 120, 0.15, "triangle", 0.05);
+          playGong(150 + i * 28, 0.09); // each reel lands on a deeper temple gong
           if (i === GRID_COLS - 1) {
             clearInterval(ticker);
+            stopDrone();
             finishSpin(finals);
           }
         }, durationMs + 100);
@@ -1098,8 +1099,12 @@
         overlay.classList.remove("pop");
         void overlay.offsetWidth;
         overlay.classList.add("pop");
-        [523, 659, 784, 1047, 1319].forEach((f, i) =>
-          setTimeout(() => playTone(f, 0.2, "triangle", 0.07), i * 110));
+        playGong(98, 0.16); // the great dragon gong for the immunity jackpot
+        [523, 659, 784, 1047, 1319, 1568].forEach((f, i) =>
+          setTimeout(() => {
+            playTone(f, 0.25, "triangle", 0.07);
+            playTone(f / 2, 0.3, "sine", 0.05);
+          }, 200 + i * 110));
       } else {
         const mood = current.dollars <= 3 ? "💸" : current.dollars <= 8 ? "😬"
           : current.dollars <= 12 ? "🙂" : "🎉";
@@ -1111,8 +1116,9 @@
           overlay.classList.remove("pop");
           void overlay.offsetWidth;
           overlay.classList.add("pop");
+          playGong(130, 0.13);
           [523, 659, 784, 1047].forEach((f, i) =>
-            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
+            setTimeout(() => playTone(f, 0.2, "triangle", 0.06), 150 + i * 110));
         } else if (current.dollars <= 3) {
           const overlay = $("jackpot-overlay");
           overlay.textContent = `💸 UH OH! only ${current.dollars}× 💲`;
@@ -1120,17 +1126,29 @@
           overlay.classList.remove("pop");
           void overlay.offsetWidth;
           overlay.classList.add("pop");
+          playGong(52, 0.16); // doom gong
           [784, 659, 523, 392].forEach((f, i) =>
-            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 130));
+            setTimeout(() => playTone(f, 0.18, "triangle", 0.06), 150 + i * 130));
         }
       }
       renderScoreboard();
 
       const btn = $("spin-btn");
       btn.textContent = spinIndex < racers.length - 1 ? "Next player" : "See the chances 📊";
-      btn.disabled = false;
+      // The button stays hidden so the grid is readable — a tap anywhere
+      // brings it back (see the document click listener below)
+      $("spin-result").textContent += " · tap anywhere to continue";
       spinning = false;
     }
+
+    // After a spin the reels stay unobstructed while everyone counts the
+    // dollars; tapping anywhere on the screen summons the button back.
+    document.addEventListener("click", () => {
+      if (screens.spin.classList.contains("hidden") || spinning) return;
+      const current = racers[spinIndex];
+      if (!current || current.dollars === null) return;
+      $("spin-btn").classList.remove("hidden");
+    });
 
     /* ---------- The damage report table ---------- */
     function showChanceTable() {
@@ -1281,7 +1299,8 @@
             burst.className = "crash-burst";
             burst.textContent = "💥";
             rd.el.appendChild(burst);
-            playTone(160, 0.4, "sawtooth", 0.08);
+            playSweep(320, 55, 0.7, "sawtooth", 0.1);
+            playGong(60, 0.14);
             protestor.worldP = rd.progress; // protestor plants themselves at the crash site
           }
           if (!rd.crashed) {
@@ -1348,13 +1367,7 @@
 
     /* ---------- Result screen ---------- */
     const JOKES = [
-      "{n} didn't lose a race — {n} won an invoice. 🪧",
-      "The protestor's sign just said \"{n} should pay\". Fair enough.",
-      "Witnesses report {n}'s wallet screamed louder than the crash.",
-      "{n} spun the wheel of fortune and found only misfortune.",
-      "Statistically {n} was doomed. Mathematically? Also doomed.",
-      "The croissants voted, and they chose {n}. Democracy is delicious.",
-      "{n} braked when they should have accelerated. The bill didn't.",
+      "Oh no! Protestors took out {n} and they lost the race… looks like {n} has to pay! 🪧",
     ];
 
     function finishRace(payer) {
@@ -1371,51 +1384,7 @@
       banner.classList.remove("pop");
       void banner.offsetWidth;
       banner.classList.add("pop");
-
-      // Reset the crying portrait for this round
-      $("payer-photo").value = "";
-      $("crying-frame").classList.add("hidden");
-      $("photo-label").textContent = `📷 Add a photo of ${payer} for the crying portrait`;
-      $("crying-caption").textContent = `${payer}, settling the bill…`;
     }
-
-    // The photo never leaves the phone — it's read locally, rendered into
-    // the page with the tearful treatment, and a small thumbnail is kept
-    // in localStorage beside the payment history entry.
-    function saveHistoryThumb(dataUrl) {
-      const img = new Image();
-      img.onload = () => {
-        // Centre-crop to a small square so 20 entries stay well inside
-        // the localStorage quota
-        const size = 96;
-        const canvas = document.createElement("canvas");
-        canvas.width = canvas.height = size;
-        const s = Math.min(img.width, img.height);
-        canvas.getContext("2d").drawImage(img,
-          (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
-        const entry = history[history.length - 1];
-        if (entry) {
-          entry.photo = canvas.toDataURL("image/jpeg", 0.7);
-          save("caferace.history", history);
-          renderHistory();
-        }
-      };
-      img.src = dataUrl;
-    }
-
-    $("payer-photo").addEventListener("change", (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        $("crying-img").src = reader.result;
-        $("crying-frame").classList.remove("hidden");
-        saveHistoryThumb(reader.result);
-        playTone(392, 0.3, "triangle", 0.05);
-        setTimeout(() => playTone(330, 0.45, "triangle", 0.05), 260);
-      };
-      reader.readAsDataURL(file);
-    });
 
     $("again-btn").addEventListener("click", () => {
       showScreen("setup");
