@@ -234,7 +234,7 @@
       width: 26px;
       position: relative;
       border-radius: 8px;
-      border: 2px solid #d4a437;
+      border: 2px solid #37e6ff;
       background: linear-gradient(180deg, #e5484d 0%, #f5a623 50%, #3ddc84 100%);
       box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45);
     }
@@ -263,11 +263,11 @@
       margin: 1.25rem auto;
       padding: 0.8rem 0.8rem 1rem;
       max-width: 320px;
-      background: linear-gradient(160deg, #8e2431, #5e1520);
-      border: 3px solid #d4a437;
+      background: linear-gradient(160deg, #4a1a7a, #2a0f52);
+      border: 3px solid #37e6ff;
       border-radius: 16px;
       box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.18),
-                  0 10px 24px rgba(94, 21, 32, 0.35);
+                  0 10px 24px rgba(42, 15, 82, 0.45);
     }
 
     .lights {
@@ -280,7 +280,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #ffd76a;
+      background: #ff5ce1;
       animation: blink 1.2s infinite;
     }
 
@@ -290,7 +290,7 @@
 
     @keyframes blink {
       0%, 100% { opacity: 0.25; box-shadow: none; }
-      50% { opacity: 1; box-shadow: 0 0 6px #ffd76a; }
+      50% { opacity: 1; box-shadow: 0 0 6px #ff5ce1; }
     }
 
     .jackpot-banner {
@@ -301,12 +301,12 @@
       font-size: 1rem;
       font-weight: 800;
       letter-spacing: 0.12em;
-      color: #ffe9a8;
-      background: linear-gradient(180deg, #c9332f, #7e1a1a);
-      border: 2px solid #ffd76a;
+      color: #d9fbff;
+      background: linear-gradient(180deg, #7a2ce0, #3c1291);
+      border: 2px solid #37e6ff;
       border-radius: 999px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 10px rgba(255, 215, 106, 0.55);
-      box-shadow: 0 0 14px rgba(255, 160, 60, 0.45);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 10px rgba(55, 230, 255, 0.55);
+      box-shadow: 0 0 14px rgba(55, 230, 255, 0.45);
     }
 
     .slot {
@@ -320,22 +320,22 @@
     }
 
     .reel-window {
-      width: 58px;
-      height: 208px;
+      width: 52px;
+      height: 260px;
       overflow: hidden;
       position: relative;
       background: linear-gradient(180deg, #fdf6e6, #f7ead0);
-      border: 2px solid #caa53d;
+      border: 2px solid #2fb9d6;
       border-radius: 8px;
       box-shadow: inset 0 10px 12px rgba(0, 0, 0, 0.2),
                   inset 0 -10px 12px rgba(0, 0, 0, 0.2);
     }
 
     .reel-window.stopped {
-      border-color: #ffd76a;
+      border-color: #7bf3ff;
       box-shadow: inset 0 10px 12px rgba(0, 0, 0, 0.2),
                   inset 0 -10px 12px rgba(0, 0, 0, 0.2),
-                  0 0 10px rgba(255, 215, 106, 0.7);
+                  0 0 10px rgba(123, 243, 255, 0.7);
     }
 
     .machine {
@@ -670,8 +670,8 @@
       <div class="machine-row">
         <div class="machine">
           <div class="lights">
-            <span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
           </div>
           <span class="jackpot-banner">★ CAFE JACKPOT ★</span>
           <div class="slot">
@@ -679,10 +679,11 @@
             <div class="reel-window" id="window-1"><div class="strip" id="strip-1"></div></div>
             <div class="reel-window" id="window-2"><div class="strip" id="strip-2"></div></div>
             <div class="reel-window" id="window-3"><div class="strip" id="strip-3"></div></div>
+            <div class="reel-window" id="window-4"><div class="strip" id="strip-4"></div></div>
           </div>
           <div class="lights" style="margin: 10px 6px 0;">
-            <span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
           </div>
           <div class="jackpot-overlay hidden" id="jackpot-overlay"></div>
         </div>
@@ -737,12 +738,12 @@
     const CRASH_MIN = 2, CRASH_MAX = 9;
     const DOLLAR_CHANCE = 1 / 3;
     const OTHER_SYMBOLS = ["☕", "🥐", "🍰", "🥖", "🧁"];
-    const GRID_COLS = 4, GRID_ROWS = 4; // 16 symbols per spin
+    const GRID_COLS = 5, GRID_ROWS = 5; // 25 symbols per spin
 
     /* ---------- Pure game logic (kept DOM-free for testing) ---------- */
     function payWeight(dollars) {
-      // 0-16 dollar signs; more is better — every 4 halves your odds of
-      // paying (0 -> 1, 16 -> 1/16)
+      // 0-25 dollar signs; more is better — every 4 halves your odds of
+      // paying (0 -> 1, 24 -> 1/64)
       return Math.pow(2, -dollars / 4);
     }
 
@@ -927,7 +928,7 @@
     });
 
     const REEL_CELL = 52; // must match .cell height in CSS
-    const REEL_DURATIONS = [1.2, 1.6, 2.0, 2.4]; // columns stop left to right
+    const REEL_DURATIONS = [1.2, 1.6, 2.0, 2.4, 2.8]; // columns stop left to right
 
     function cellEl(symbol) {
       const div = document.createElement("div");
@@ -963,7 +964,7 @@
     function setRiskMeter(dollars, immune) {
       const thumb = $("risk-thumb");
       thumb.classList.toggle("immune", immune);
-      // 0 dollars -> top (RISKY), 16 dollars or immunity -> bottom (SAFE)
+      // 0 dollars -> top (RISKY), a full grid of dollars or immunity -> bottom (SAFE)
       const frac = immune ? 1 : dollars / (GRID_COLS * GRID_ROWS);
       thumb.style.top = `calc(${(frac * 100).toFixed(1)}% - ${(frac * 12).toFixed(1)}px)`;
     }
@@ -1019,7 +1020,7 @@
       btn.disabled = true;
       $("jackpot-overlay").classList.add("hidden");
 
-      // 16 finals: one column of GRID_ROWS symbols per reel
+      // 25 finals: one column of GRID_ROWS symbols per reel
       const finals = Array.from({ length: GRID_COLS }, () =>
         Array.from({ length: GRID_ROWS }, () => spinReelSymbol(Math.random))
       );
@@ -1079,10 +1080,10 @@
         [523, 659, 784, 1047, 1319].forEach((f, i) =>
           setTimeout(() => playTone(f, 0.2, "triangle", 0.07), i * 110));
       } else {
-        const mood = current.dollars <= 2 ? "💸" : current.dollars <= 5 ? "😬"
-          : current.dollars <= 8 ? "🙂" : "🎉";
+        const mood = current.dollars <= 3 ? "💸" : current.dollars <= 8 ? "😬"
+          : current.dollars <= 12 ? "🙂" : "🎉";
         $("spin-result").textContent = `${current.dollars}× 💲 ${mood} (more is better)`;
-        if (current.dollars >= 9) {
+        if (current.dollars >= 13) {
           const overlay = $("jackpot-overlay");
           overlay.textContent = `🎰 JACKPOT! ${current.dollars}× 💲`;
           overlay.classList.remove("hidden");
@@ -1091,7 +1092,7 @@
           overlay.classList.add("pop");
           [523, 659, 784, 1047].forEach((f, i) =>
             setTimeout(() => playTone(f, 0.18, "triangle", 0.06), i * 110));
-        } else if (current.dollars <= 2) {
+        } else if (current.dollars <= 3) {
           const overlay = $("jackpot-overlay");
           overlay.textContent = `💸 UH OH! only ${current.dollars}× 💲`;
           overlay.classList.remove("hidden");
@@ -1378,6 +1379,10 @@
     });
 
     /* ---------- Init ---------- */
+    function helloWorld() {
+      console.log("Hello, world!");
+    }
+
     renderChips();
     renderHistory();
     showScreen("setup");
