@@ -821,6 +821,14 @@
       return Math.floor(rand() * count);
     }
 
+    function rigDollarRow(columns, rand) {
+      // Force one full horizontal row of dollars into an otherwise random
+      // grid — the drawn rider's immunity shows up as the real jackpot
+      const row = Math.floor(rand() * GRID_ROWS);
+      columns.forEach((col) => { col[row] = "💲"; });
+      return columns;
+    }
+
     /* ---------- Persistence ---------- */
     function load(key, fallback) {
       try {
@@ -952,7 +960,7 @@
         $("setup-error").textContent = "You need at least 2 players ticked to race.";
         return;
       }
-      racers = present.map((p) => ({ name: p.name, dollars: null, immune: false, lucky: false }));
+      racers = present.map((p) => ({ name: p.name, dollars: null, immune: false }));
       luckyIndex = pickImmuneIndex(racers.length, Math.random);
       spinIndex = 0;
       // Buffer the soundtrack clips now so the first spin starts on beat
@@ -963,7 +971,7 @@
     });
 
     const REEL_CELL = 32; // must match .cell height in CSS
-    const REEL_DURATIONS = [1.2, 1.6, 2.0, 2.4, 2.8]; // columns stop left to right
+    const REEL_DURATIONS = [1.8, 2.8, 3.8, 4.8, 5.8]; // columns stop left to right
 
     function cellEl(symbol) {
       const div = document.createElement("div");
@@ -1086,7 +1094,7 @@
         if (r.dollars === null) return;
         const li = document.createElement("li");
         li.textContent = r.immune
-          ? `${r.name}: ${r.dollars}×💲 — 🛡️ IMMUNE ${r.lucky ? "(lucky charm)" : "(full 💲 row)"}`
+          ? `${r.name}: ${r.dollars}×💲 — 🛡️ IMMUNE (full 💲 row)`
           : `${r.name}: ${r.dollars}×💲`;
         list.appendChild(li);
       });
@@ -1112,10 +1120,12 @@
       btn.classList.add("hidden"); // out of the way while the reels run
       $("jackpot-overlay").classList.add("hidden");
 
-      // 25 finals: one column of GRID_ROWS symbols per reel
+      // 25 finals: one column of GRID_ROWS symbols per reel. The rider
+      // drawn at Start gets a full dollar row rigged into their grid.
       const finals = Array.from({ length: GRID_COLS }, () =>
         Array.from({ length: GRID_ROWS }, () => spinReelSymbol(Math.random))
       );
+      if (spinIndex === luckyIndex) rigDollarRow(finals, Math.random);
 
       // The free-spin soundtrack carries the spin, joining at the
       // energetic back half of the track; it pauses when the reels stop
@@ -1128,7 +1138,7 @@
         // Rebuild the strip: current visible cells, a run of filler symbols,
         // then the final column of symbols at the end.
         const symbols = [...strip.children].map((c) => c.textContent);
-        const fillers = 12 + i * 5; // later columns travel further
+        const fillers = 18 + i * 13; // later columns travel further
         for (let n = 0; n < fillers; n++) symbols.push(spinReelSymbol(Math.random));
         symbols.push(...finals[i]);
 
@@ -1159,16 +1169,13 @@
     function finishSpin(finals) {
       const current = racers[spinIndex];
       current.dollars = finals.flat().filter((s) => s === "💲").length;
-      current.lucky = spinIndex === luckyIndex && !hasDollarRow(finals);
-      current.immune = hasDollarRow(finals) || current.lucky;
+      current.immune = hasDollarRow(finals);
       setRiskMeter(current.dollars, current.immune);
 
       if (current.immune) {
-        $("spin-result").textContent = current.lucky
-          ? "🛡️ LUCKY CHARM — automatic immunity, you can't pay!"
-          : "🛡️ FULL 💲 ROW — instant immunity, you can't pay!";
+        $("spin-result").textContent = "🛡️ FULL 💲 ROW — instant immunity, you can't pay!";
         const overlay = $("jackpot-overlay");
-        overlay.textContent = current.lucky ? "🛡️ LUCKY — IMMUNITY!" : "🛡️ JACKPOT — IMMUNITY!";
+        overlay.textContent = "🛡️ JACKPOT — IMMUNITY!";
         overlay.classList.remove("hidden");
         overlay.classList.remove("pop");
         void overlay.offsetWidth;
