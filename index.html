@@ -815,6 +815,12 @@
       return CRASH_MIN + rand() * (CRASH_MAX - CRASH_MIN);
     }
 
+    function pickImmuneIndex(count, rand) {
+      // Every game one rider is secretly drawn for automatic immunity,
+      // revealed with the jackpot treatment when their spin finishes
+      return Math.floor(rand() * count);
+    }
+
     /* ---------- Persistence ---------- */
     function load(key, fallback) {
       try {
@@ -935,9 +941,10 @@
     });
 
     /* ---------- Spin screen ---------- */
-    let racers = []; // [{name, bikes}] for today's present players
+    let racers = []; // [{name, dollars, immune}] for today's present players
     let spinIndex = 0;
     let spinning = false;
+    let luckyIndex = -1; // rider pre-drawn for automatic immunity this game
 
     $("start-btn").addEventListener("click", () => {
       const present = players.filter((p) => p.present);
@@ -945,7 +952,8 @@
         $("setup-error").textContent = "You need at least 2 players ticked to race.";
         return;
       }
-      racers = present.map((p) => ({ name: p.name, dollars: null, immune: false }));
+      racers = present.map((p) => ({ name: p.name, dollars: null, immune: false, lucky: false }));
+      luckyIndex = pickImmuneIndex(racers.length, Math.random);
       spinIndex = 0;
       // Buffer the soundtrack clips now so the first spin starts on beat
       // (browsers can defer media loading until it's demanded)
@@ -1078,7 +1086,7 @@
         if (r.dollars === null) return;
         const li = document.createElement("li");
         li.textContent = r.immune
-          ? `${r.name}: ${r.dollars}×💲 — 🛡️ IMMUNE (full 💲 row)`
+          ? `${r.name}: ${r.dollars}×💲 — 🛡️ IMMUNE ${r.lucky ? "(lucky charm)" : "(full 💲 row)"}`
           : `${r.name}: ${r.dollars}×💲`;
         list.appendChild(li);
       });
@@ -1151,13 +1159,16 @@
     function finishSpin(finals) {
       const current = racers[spinIndex];
       current.dollars = finals.flat().filter((s) => s === "💲").length;
-      current.immune = hasDollarRow(finals);
+      current.lucky = spinIndex === luckyIndex && !hasDollarRow(finals);
+      current.immune = hasDollarRow(finals) || current.lucky;
       setRiskMeter(current.dollars, current.immune);
 
       if (current.immune) {
-        $("spin-result").textContent = "🛡️ FULL 💲 ROW — instant immunity, you can't pay!";
+        $("spin-result").textContent = current.lucky
+          ? "🛡️ LUCKY CHARM — automatic immunity, you can't pay!"
+          : "🛡️ FULL 💲 ROW — instant immunity, you can't pay!";
         const overlay = $("jackpot-overlay");
-        overlay.textContent = "🛡️ JACKPOT — IMMUNITY!";
+        overlay.textContent = current.lucky ? "🛡️ LUCKY — IMMUNITY!" : "🛡️ JACKPOT — IMMUNITY!";
         overlay.classList.remove("hidden");
         overlay.classList.remove("pop");
         void overlay.offsetWidth;
