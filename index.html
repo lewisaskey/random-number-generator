@@ -635,6 +635,18 @@
 
     details li {
       padding: 0.15rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .history-thumb {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ddd;
+      flex: none;
     }
 
     details .clear {
@@ -702,7 +714,7 @@
     <section id="screen-table" class="hidden">
       <h2>📊 The damage report</h2>
       <table class="chance-table">
-        <thead><tr><th>Rider</th><th>💲</th><th>Chance of paying</th></tr></thead>
+        <thead><tr><th>Rider</th><th>💲</th><th>Percentage chance of paying</th></tr></thead>
         <tbody id="chance-rows"></tbody>
       </table>
       <button class="primary hidden" id="race-btn">Start the race! 🏁</button>
@@ -735,7 +747,9 @@
   <script>
     /* ---------- Game constants ---------- */
     const RACE_SECONDS = 10;
-    const CRASH_MIN = 2, CRASH_MAX = 9;
+    // The finish line scrolls into view around 8.6s, so the crash always
+    // lands agonisingly close to it
+    const CRASH_MIN = 8.6, CRASH_MAX = 9.4;
     const DOLLAR_CHANCE = 1 / 3;
     const OTHER_SYMBOLS = ["☕", "🥐", "🍰", "🥖", "🧁"];
     const GRID_COLS = 5, GRID_ROWS = 5; // 25 symbols per spin
@@ -877,7 +891,14 @@
         const date = new Date(h.date).toLocaleDateString(undefined, {
           day: "numeric", month: "short", year: "numeric",
         });
-        li.textContent = `☕ ${h.name} — ${date}`;
+        if (h.photo) {
+          const img = document.createElement("img");
+          img.className = "history-thumb";
+          img.src = h.photo;
+          img.alt = h.name;
+          li.appendChild(img);
+        }
+        li.appendChild(document.createTextNode(`☕ ${h.name} — ${date}`));
         list.appendChild(li);
       });
     }
@@ -1358,8 +1379,30 @@
       $("crying-caption").textContent = `${payer}, settling the bill…`;
     }
 
-    // The photo never leaves the phone — it's read locally and only
-    // rendered into the page with the tearful treatment.
+    // The photo never leaves the phone — it's read locally, rendered into
+    // the page with the tearful treatment, and a small thumbnail is kept
+    // in localStorage beside the payment history entry.
+    function saveHistoryThumb(dataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        // Centre-crop to a small square so 20 entries stay well inside
+        // the localStorage quota
+        const size = 96;
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = size;
+        const s = Math.min(img.width, img.height);
+        canvas.getContext("2d").drawImage(img,
+          (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+        const entry = history[history.length - 1];
+        if (entry) {
+          entry.photo = canvas.toDataURL("image/jpeg", 0.7);
+          save("caferace.history", history);
+          renderHistory();
+        }
+      };
+      img.src = dataUrl;
+    }
+
     $("payer-photo").addEventListener("change", (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -1367,6 +1410,7 @@
       reader.onload = () => {
         $("crying-img").src = reader.result;
         $("crying-frame").classList.remove("hidden");
+        saveHistoryThumb(reader.result);
         playTone(392, 0.3, "triangle", 0.05);
         setTimeout(() => playTone(330, 0.45, "triangle", 0.05), 260);
       };
