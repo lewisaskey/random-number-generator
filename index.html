@@ -947,6 +947,9 @@
       }
       racers = present.map((p) => ({ name: p.name, dollars: null, immune: false }));
       spinIndex = 0;
+      // Buffer the soundtrack clips now so the first spin starts on beat
+      // (browsers can defer media loading until it's demanded)
+      try { spinTrack.load(); jackpotTrack.load(); } catch {}
       showScreen("spin");
       renderSpinScreen();
     });
@@ -1034,34 +1037,38 @@
         playTone(freq * mult, dur, "sine", (volume || 0.1) / (i + 1)));
     }
 
-    // Low tension drone that swells underneath the spinning reels
-    let drone = null;
-    function startDrone(seconds) {
-      try {
-        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + seconds);
-        gain.connect(audioCtx.destination);
-        const oscs = [55, 55.8, 110.4].map((f) => {
-          const o = audioCtx.createOscillator();
-          o.type = "sawtooth";
-          o.frequency.value = f;
-          o.connect(gain);
-          o.start();
-          return o;
-        });
-        drone = { oscs, gain };
-      } catch {}
-    }
+    /* Soundtrack clips — two mp3s in audio/. Each play uses a hand-picked
+       section (offsets chosen from an RMS loudness analysis of the files):
+       free_spin.mp3 is 29s, steady music from ~2s on — spins start at 22s,
+       in the energetic back half, and pause when the reels stop.
+       topdollar_jackpot.mp3 is 14s — its loud celebratory body runs
+       ~3.5s-12.5s, so the immunity jackpot plays exactly that window.
+       Falls back silently if the files are missing or playback is blocked. */
+    const spinTrack = new Audio("audio/free_spin.mp3");
+    const jackpotTrack = new Audio("audio/topdollar_jackpot.mp3");
+    spinTrack.preload = "auto";
+    jackpotTrack.preload = "auto";
 
-    function stopDrone() {
-      if (!drone) return;
+    function playClip(track, startAt, volume, stopAfter) {
       try {
-        drone.gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-        drone.oscs.forEach((o) => o.stop(audioCtx.currentTime + 0.45));
+        clearTimeout(track._stopTimer);
+        track.volume = volume;
+        const seekAndPlay = () => {
+          track.currentTime = startAt;
+          track.play().catch(() => {});
+        };
+        if (track.readyState >= 1) {
+          seekAndPlay();
+        } else {
+          // Metadata not in yet (first play on a slow connection) — start
+          // the load and seek as soon as the duration is known
+          track.load();
+          track.addEventListener("loadedmetadata", seekAndPlay, { once: true });
+        }
+        if (stopAfter) {
+          track._stopTimer = setTimeout(() => track.pause(), stopAfter * 1000);
+        }
       } catch {}
-      drone = null;
     }
 
     function renderScoreboard() {
@@ -1102,16 +1109,9 @@
         Array.from({ length: GRID_ROWS }, () => spinReelSymbol(Math.random))
       );
 
-      // Launch whoosh, tension drone, and a rising tick with a heartbeat
-      // thump underneath — dragon-machine drama while anything still spins
-      playSweep(120, 620, 0.5, "triangle", 0.06);
-      startDrone(REEL_DURATIONS[GRID_COLS - 1]);
-      let tick = 0;
-      const ticker = setInterval(() => {
-        tick++;
-        playTone(900 + tick * 18, 0.03, "square", 0.015);
-        if (tick % 5 === 0) playTone(58, 0.22, "sine", 0.12);
-      }, 95);
+      // The free-spin soundtrack carries the spin, joining at the
+      // energetic back half of the track; it pauses when the reels stop
+      playClip(spinTrack, 22, 0.55);
 
       for (let i = 0; i < GRID_COLS; i++) {
         const strip = $(`strip-${i}`);
@@ -1141,8 +1141,7 @@
           $(`window-${i}`).classList.add("stopped");
           playGong(150 + i * 28, 0.09); // each reel lands on a deeper temple gong
           if (i === GRID_COLS - 1) {
-            clearInterval(ticker);
-            stopDrone();
+            spinTrack.pause();
             finishSpin(finals);
           }
         }, durationMs + 100);
@@ -1163,12 +1162,8 @@
         overlay.classList.remove("pop");
         void overlay.offsetWidth;
         overlay.classList.add("pop");
-        playGong(98, 0.16); // the great dragon gong for the immunity jackpot
-        [523, 659, 784, 1047, 1319, 1568].forEach((f, i) =>
-          setTimeout(() => {
-            playTone(f, 0.25, "triangle", 0.07);
-            playTone(f / 2, 0.3, "sine", 0.05);
-          }, 200 + i * 110));
+        // The Top Dollar jackpot track's loud celebratory body (3.5s-12.5s)
+        playClip(jackpotTrack, 3.5, 0.8, 9);
       } else {
         const mood = current.dollars <= 3 ? "💸" : current.dollars <= 8 ? "😬"
           : current.dollars <= 12 ? "🙂" : "🎉";
