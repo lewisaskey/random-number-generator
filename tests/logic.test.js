@@ -1,9 +1,9 @@
-// Unit tests for the pure game logic in index.html.
+// Unit tests for the pure game logic in cafe-racing.html.
 // Run with: node tests/logic.test.js
 const fs = require("fs");
 const path = require("path");
 
-const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const html = fs.readFileSync(path.join(__dirname, "..", "cafe-racing.html"), "utf8");
 const script = html.match(/<script>([\s\S]*)<\/script>/)[1];
 const pure = script.slice(0, script.indexOf("/* ---------- Persistence"));
 const L = new Function(pure +

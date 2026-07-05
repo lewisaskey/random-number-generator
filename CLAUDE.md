@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"Cafe Bike Race" — a party game for deciding who pays at a cafe stop. All code lives in one file, `index.html` (HTML, CSS, and JavaScript all inline); the only other assets are two soundtrack mp3s in `audio/`. No dependencies, no build step, no server. Live via GitHub Pages at https://lewisaskey.github.io/random-number-generator/ — every push to `master` redeploys it (allow a minute or two).
+"Cafe Bike Race" — a party game for deciding who pays at a cafe stop. All code lives in one file, `cafe-racing.html` (HTML, CSS, and JavaScript all inline); the only other assets are two soundtrack mp3s in `audio/`. No dependencies, no build step, no server. Live via GitHub Pages at https://lewisaskey.github.io/random-number-generator/ — every push to `master` redeploys it (allow a minute or two).
 
 ## Running
 
-Open `index.html` directly in a browser. To drive it with the Chrome extension, serve it first (`python -m http.server`) — the extension can't load `file://` URLs. Note: in long-hidden automation tabs Chrome throttles timers heavily; spins/races that appear frozen there resolve instantly on a visible screen.
+Open `cafe-racing.html` directly in a browser. To drive it with the Chrome extension, serve it first (`python -m http.server`) — the extension can't load `file://` URLs. Note: in long-hidden automation tabs Chrome throttles timers heavily; spins/races that appear frozen there resolve instantly on a visible screen.
 
 ## How the game works
 
@@ -24,4 +24,4 @@ The pure game logic (`payWeight`, `spinReelSymbol`, `pickPayer`, `drawCrashTime`
 
 ## Testing
 
-Unit tests live in `tests/logic.test.js` — run `node tests/logic.test.js` (no dependencies). The script extracts the script block from `index.html`, slices everything above the `/* ---------- Persistence` marker, and exercises the pure functions (weight curve, immune-index draw, rigged dollar rows, weighted-draw percentages, crash-time bounds, reel durations). Keep the pure-logic section free of DOM/localStorage references so this keeps working. For deterministic browser testing of rare outcomes (like immunity), call `finishSpin(craftedGrid)` directly from the console instead of clicking Spin.
+Unit tests live in `tests/logic.test.js` — run `node tests/logic.test.js` (no dependencies). The script extracts the script block from `cafe-racing.html`, slices everything above the `/* ---------- Persistence` marker, and exercises the pure functions (weight curve, immune-index draw, rigged dollar rows, weighted-draw percentages, crash-time bounds, reel durations). Keep the pure-logic section free of DOM/localStorage references so this keeps working. For deterministic browser testing of rare outcomes (like immunity), call `finishSpin(craftedGrid)` directly from the console instead of clicking Spin.
