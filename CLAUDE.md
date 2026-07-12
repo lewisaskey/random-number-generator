@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"Cafe Bike Race" — a party game for deciding who pays at a cafe stop. All code lives in one file, `cafe-racing.html` (HTML, CSS, and JavaScript all inline); the only other assets are two soundtrack mp3s in `audio/`. No dependencies, no build step, no server. Live via GitHub Pages at https://lewisaskey.github.io/random-number-generator/ — every push to `master` redeploys it (allow a minute or two).
+"Cafe Bike Race" — a party game for deciding who pays at a cafe stop. All code lives in one file, `cafe-racing.html` (HTML, CSS, and JavaScript all inline); the only other assets are two soundtrack mp3s in `audio/`. No dependencies, no build step, no server. Live via GitHub Pages at https://lewisaskey.github.io/cafe-racing/ — every push to `master` redeploys it (allow a minute or two).
 
 ## Running
 
